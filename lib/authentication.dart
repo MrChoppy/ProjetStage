@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:projetdev/pages/update.dart';
 import 'pages/home.dart';
 
 Future<void> signUpWithEmailAndPasswordEtudiant(
@@ -37,7 +38,7 @@ Future<void> signUpWithEmailAndPasswordEtudiant(
     //change de page
     if (context.mounted) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => const Home(),
+        builder: (context) => const Update(),
       ));
     }
   } catch (e) {
@@ -84,7 +85,7 @@ Future<void> signUpWithEmailAndPasswordEmployeur(
     //change de page
     if (context.mounted) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => const Home(),
+        builder: (context) => const Update(),
       ));
     }
   } catch (e) {
@@ -108,7 +109,7 @@ Future<void> signInWithEmailAndPassword(
     //change de page
     if (context.mounted) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => const Home(),
+        builder: (context) => const Update(),
       ));
     }
   } catch (e) {
@@ -126,17 +127,18 @@ Future<void> signOut() async {
 User? getCurrentUser() {
   return FirebaseAuth.instance.currentUser;
 }
+String getUserId(){
+   User? user = getCurrentUser();
+    String userId = user != null ? user.uid : '';
+return userId;
+}
 
-Future<void> updateUserInfo(String uid, Map<String, dynamic> newData) async {
+Future<void> updateEtudiantInfo(String uid, Map<String, dynamic> newData) async {
   try {
-    // Define the collection name based on the user's role
-
- 
-
-
-    // Récupérer les données actuelles de l'utilisateur/employeur
+    print("tesst");
+    // Récupérer les données actuelles de l'etudiant
     DocumentSnapshot snapshot =
-        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+        await FirebaseFirestore.instance.collection('etudiant').doc(uid).get();
 
     // Extraire les données actuelles
     Map<String, dynamic> currentData =
@@ -153,12 +155,72 @@ Future<void> updateUserInfo(String uid, Map<String, dynamic> newData) async {
     // Mettre à jour uniquement les champs non vides et modifiés dans la base de données
     if (updatedData.isNotEmpty) {
       await FirebaseFirestore.instance
-          .collection('users')
+          .collection('etudiant')
           .doc(uid)
           .update(updatedData);
     }
   } catch (e) {
     print('Erreur lors de la mise à jour des informations : $e');
   }
+
+  
 }
 
+Future<void> updateEmployeurInfo(String uid, Map<String, dynamic> newData) async {
+  try {
+    // Récupérer les données actuelles de l'employeur
+    DocumentSnapshot snapshot =
+        await FirebaseFirestore.instance.collection('employeur').doc(uid).get();
+
+    // Extraire les données actuelles
+    Map<String, dynamic> currentData =
+        snapshot.data() as Map<String, dynamic>;
+
+    // Comparer les nouvelles données avec les données actuelles et mettre à jour uniquement si non vide
+    Map<String, dynamic> updatedData = {};
+    newData.forEach((key, value) {
+      if (value != null && value != '' && currentData[key] != value) {
+        updatedData[key] = value;
+      }
+    });
+
+    // Mettre à jour uniquement les champs non vides et modifiés dans la base de données
+    if (updatedData.isNotEmpty) {
+      await FirebaseFirestore.instance
+          .collection('employeur')
+          .doc(uid)
+          .update(updatedData);
+    }
+  } catch (e) {
+    print('Erreur lors de la mise à jour des informations : $e');
+  }
+
+  
+}
+
+Future<String> getUserPerms(String uid) async {
+  try {
+    // Check if the user's document exists in the 'employeur' collection
+    
+    DocumentSnapshot employerDoc =
+        await FirebaseFirestore.instance.collection('employeur').doc(uid).get();
+        
+    // Check if the user's document exists in the 'etudiant' collection
+    DocumentSnapshot studentDoc =
+        await FirebaseFirestore.instance.collection('etudiant').doc(uid).get();
+
+    // Determine permissions based on document existence
+    if (employerDoc.exists) {
+      return 'Employeur';
+    } else if (studentDoc.exists) {
+      return 'Étudiant';
+    } else {
+      // Handle the case where the user document doesn't exist in either collection
+      return '';
+    }
+  } catch (e) {
+    // Handle any errors that occur during the data retrieval
+    print('Error fetching user permissions: $e');
+    return '';
+  }
+}

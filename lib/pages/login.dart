@@ -3,6 +3,8 @@ import 'signup.dart';
 import '/authentication.dart';
 
 class Login extends StatefulWidget {
+  const Login({super.key});
+
   @override
   _LoginState createState() => _LoginState();
 }
@@ -59,7 +61,7 @@ class _LoginState extends State<Login> {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => Signup(),
+                    builder: (context) => const Signup(),
                   ),
                 );
               },

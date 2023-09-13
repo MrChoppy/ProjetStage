@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'login.dart'; // Import your login screen
-import 'home.dart'; // Import Firebase Authentication
+import 'login.dart';
 import '/authentication.dart';
 
 class Signup extends StatefulWidget {

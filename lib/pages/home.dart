@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '/authentication.dart'; // Importez la gestion de l'authentification
-
+import '/authentication.dart';
 import 'login.dart';
 
 class Home extends StatelessWidget {
@@ -9,7 +8,7 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    User? user = FirebaseAuth.instance.currentUser;
+    User? user = getCurrentUser();
 
     // Contrôleur de texte pour le champ du nom
     final TextEditingController nomController = TextEditingController();
@@ -26,7 +25,7 @@ class Home extends StatelessWidget {
               if (context.mounted) {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => Login(),
+                    builder: (context) => const Login(),
                   ),
                 );
               }
@@ -59,7 +58,7 @@ class Home extends StatelessWidget {
                 // Vérifiez si le nouveau nom n'est pas vide
                 if (newName.isNotEmpty) {
                   // Appelez la fonction updateUserInfo pour mettre à jour le nom
-                  await updateUserInfo(user!.uid, {'nom': newName});
+                  await updateEtudiantInfo(user!.uid, {'nom': newName});
                   // Effacez le champ de texte
                   nomController.clear();
                 }
