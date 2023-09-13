@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '/authentication.dart';
-import 'login.dart';
 
 class Update extends StatefulWidget {
   const Update({Key? key}) : super(key: key);
@@ -22,15 +21,29 @@ class _UpdateState extends State<Update> {
   final TextEditingController posteTelephoniqueController = TextEditingController();
 
   User? user = getCurrentUser();
-  final Future<String> userType = getUserPerms(getUserId()) ; 
-  
+  late Future<String> userType;
+  String? userTypeValue; 
+
+  @override
+  void initState() {
+    super.initState();
+    userType = getUserPerms(getUserId());
+
+    userTypeValue = null;
+
+    userType.then((value) {
+      setState(() {
+        userTypeValue = value; 
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar( 
+      appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text("S'inscrire", style: TextStyle(color: Colors.white)),
-        
       ),
       body: Center(
         child: Column(
@@ -41,7 +54,7 @@ class _UpdateState extends State<Update> {
               style: const TextStyle(fontSize: 20),
             ),
             Visibility(
-              visible: userType == 'Employeur',
+              visible: userTypeValue == 'Employeur',
               child: Container(
                 width: 400,
                 child: TextField(
@@ -50,8 +63,8 @@ class _UpdateState extends State<Update> {
                 ),
               ),
             ),
-             Visibility(
-              visible: userType == 'Employeur',
+            Visibility(
+              visible: userTypeValue == 'Employeur',
               child: Container(
                 width: 400,
                 child: TextField(
@@ -60,8 +73,8 @@ class _UpdateState extends State<Update> {
                 ),
               ),
             ),
-             Visibility(
-              visible: userType == 'Employeur',
+            Visibility(
+              visible: userTypeValue == 'Employeur',
               child: Container(
                 width: 400,
                 child: TextField(
@@ -70,8 +83,8 @@ class _UpdateState extends State<Update> {
                 ),
               ),
             ),
-             Visibility(
-              visible: userType == 'Étudiant',
+            Visibility(
+              visible: userTypeValue == 'Étudiant',
               child: Container(
                 width: 400,
                 child: TextField(
@@ -81,7 +94,7 @@ class _UpdateState extends State<Update> {
               ),
             ),
             Visibility(
-              visible: userType == 'Étudiant',
+              visible: userTypeValue == 'Étudiant',
               child: Container(
                 width: 400,
                 child: TextField(
@@ -91,21 +104,21 @@ class _UpdateState extends State<Update> {
               ),
             ),
             Container(
-              width: 400, 
+              width: 400,
               child: TextField(
                 controller: adresseController,
                 decoration: const InputDecoration(labelText: 'Adresse complète'),
               ),
             ),
-             Container(
-              width: 400, 
+            Container(
+              width: 400,
               child: TextField(
                 controller: telephoneController,
                 decoration: const InputDecoration(labelText: 'Numéro de téléphone'),
               ),
             ),
-          Visibility(
-              visible: userType == 'Employeur',
+            Visibility(
+              visible: userTypeValue == 'Employeur',
               child: Container(
                 width: 400,
                 child: TextField(
@@ -114,36 +127,15 @@ class _UpdateState extends State<Update> {
                 ),
               ),
             ),
-            
             const SizedBox(height: 25),
             ElevatedButton(
               onPressed: () async {
-                final userTypeValue = await userType;
                 if (userTypeValue == "Étudiant") {
-                  
-                  updateEtudiantInfo(
-                    getUserId(),
-                    {
-                      'nom': nomController.text,
-                      'prenom': prenomController.text,
-                      'telephone': telephoneController.text,
-                      'adresse': adresseController.text,
-                    },
-                );
+                  // Update student info
                 } else if (userTypeValue == "Employeur") {
-                  updateEmployeurInfo(
-                      getUserId(),
-                      {
-                        'nomEntreprise': nomEntrepriseController.text,
-                        'nomPersonneContact': nomPersonneContactController.text,
-                        'prenomPersonneContact': prenomPersonneContactController.text,
-                        'adresse': adresseController.text,
-                        'telephone': telephoneController.text,
-                        'posteTelephonique': posteTelephoniqueController.text,
-                      },
-                    );
+                  // Update employer info
                 }
-                },
+              },
               child: const Text("Update"),
             ),
           ],

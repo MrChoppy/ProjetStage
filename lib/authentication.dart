@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:projetdev/pages/update.dart';
-import 'pages/home.dart';
 
 Future<void> signUpWithEmailAndPasswordEtudiant(
     //AJOUTE: String prenom, String nom,  etc.
