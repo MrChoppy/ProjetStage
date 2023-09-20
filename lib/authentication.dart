@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:projetdev/pages/creationStage.dart';
 import 'package:projetdev/pages/home.dart';
 import 'package:projetdev/pages/update.dart';
+import 'package:projetdev/pages/vueStagesEmployeur.dart';
+
+import 'pages/vueStages.dart';
 
 Future<void> signUpWithEmailAndPasswordEtudiant(
   //AJOUTE: String prenom, String nom,  etc.
@@ -24,7 +27,6 @@ Future<void> signUpWithEmailAndPasswordEtudiant(
     // Récupérer l'utilisateur actuellement authentifié
     User? user = FirebaseAuth.instance.currentUser;
     // Vérifier si l'utilisateur n'est pas nul
-    print(user);
     if (user != null) {
       // Créer un document dans Firestore avec les données de l'utilisateur
       await FirebaseFirestore.instance
@@ -110,13 +112,34 @@ Future<void> signInWithEmailAndPassword(
       password: password,
     );
     //change de page
-    if (context.mounted) {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => const CreationStage(),
-      ));
+ User? user = getCurrentUser();
+
+    if (user != null) {
+      String userId = user.uid;
+
+      // Determine the user's role (Etudiant or Employeur)
+      String userPerms = await getUserPerms(userId);
+
+      // Navigate based on the user's role
+      if (userPerms == "Étudiant") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => VueStages(), // Navigate to VueStages for Etudiant
+          ),
+        );
+      } else if (userPerms == "Employeur") {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => VueStagesEmployeur(), // Navigate to CreationStage for Employeur
+          ),
+        );
+      } else {
+        // Handle other user roles or scenarios as needed
+        print('User role not recognized.');
+      }
     }
   } catch (e) {
-    // Gérer les erreurs (par exemple, des identifiants invalides)
+    // Handle errors (e.g., invalid credentials)
     print('Erreur : $e');
   }
 }
@@ -252,5 +275,21 @@ Future<void> addStage(
     }
   } catch (e) {
     print('Erreur lors de lajout du stage : $e');
+  }
+}
+
+Future<QuerySnapshot> vueStages() async {
+  try {
+    return await FirebaseFirestore.instance.collection('stages').get();
+  } catch (e) {
+    throw Exception('Error fetching stages: $e');
+  }
+}
+
+Future<QuerySnapshot> vueStagesEmployeur(String uid) async {
+  try {
+    return await FirebaseFirestore.instance.collection('stages').where('employeurId', isEqualTo: uid).get();
+  } catch (e) {
+    throw Exception('Error fetching stages: $e');
   }
 }

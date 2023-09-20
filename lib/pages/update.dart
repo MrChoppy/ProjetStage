@@ -132,8 +132,26 @@ class _UpdateState extends State<Update> {
               onPressed: () async {
                 if (userTypeValue == "Étudiant") {
                   // Update student info
+                  String uid = getUserId();
+                  Map<String, dynamic> newData = {
+                    'nom': nomController.text,
+                    'prenom': prenomController.text,
+                    'adresse': adresseController.text,
+                    'telephone': telephoneController.text,
+                  };
+                  await updateEtudiantInfo(uid, newData);
                 } else if (userTypeValue == "Employeur") {
                   // Update employer info
+                  String uid = getUserId();
+                  Map<String, dynamic> newData = {
+                    'nomEntreprise': nomEntrepriseController.text,
+                    'prenomPersonneContact': prenomPersonneContactController.text,
+                    'nomPersonneContact': nomPersonneContactController.text,
+                    'adresse': adresseController.text,
+                    'telephone': telephoneController.text,
+                    'posteTelephonique': posteTelephoniqueController.text,
+                  };
+                  await updateEmployeurInfo(uid, newData);
                 }
               },
               child: const Text("Update"),
