@@ -10,9 +10,6 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     User? user = getCurrentUser();
 
-    // Contrôleur de texte pour le champ du nom
-    final TextEditingController nomController = TextEditingController();
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -40,30 +37,6 @@ class Home extends StatelessWidget {
             Text(
               'Bienvenue, ${user?.email ?? 'Utilisateur'}!',
               style: const TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 20),
-            // Champ de texte pour entrer le nouveau nom
-            TextFormField(
-              controller: nomController,
-              decoration: const InputDecoration(
-                labelText: 'Changer le nom',
-              ),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () async {
-                // Obtenez le nouveau nom à partir du champ de texte
-                String newName = nomController.text.trim();
-
-                // Vérifiez si le nouveau nom n'est pas vide
-                if (newName.isNotEmpty) {
-                  // Appelez la fonction updateUserInfo pour mettre à jour le nom
-                  await updateEtudiantInfo(user!.uid, {'nom': newName});
-                  // Effacez le champ de texte
-                  nomController.clear();
-                }
-              },
-              child: const Text('Mettre à jour le nom'),
             ),
           ],
         ),
