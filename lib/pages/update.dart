@@ -16,13 +16,17 @@ class _UpdateState extends State<Update> {
   final TextEditingController telephoneController = TextEditingController();
 
   final TextEditingController nomEntrepriseController = TextEditingController();
-  final TextEditingController prenomPersonneContactController = TextEditingController();
-  final TextEditingController nomPersonneContactController = TextEditingController();
-  final TextEditingController posteTelephoniqueController = TextEditingController();
+  final TextEditingController prenomPersonneContactController =
+      TextEditingController();
+  final TextEditingController nomPersonneContactController =
+      TextEditingController();
+  final TextEditingController posteTelephoniqueController =
+      TextEditingController();
 
   User? user = getCurrentUser();
   late Future<String> userType;
-  String? userTypeValue; 
+  String? userTypeValue;
+  String successMessage = ''; // Define success message
 
   @override
   void initState() {
@@ -31,10 +35,23 @@ class _UpdateState extends State<Update> {
 
     userTypeValue = null;
 
-    userType.then((value) {
+    userType.then((value) async {
       setState(() {
-        userTypeValue = value; 
+        userTypeValue = value;
       });
+
+      // Fill text fields with user information from the database
+      await updateUserTextFields(
+        userTypeValue!,
+        nomController,
+        prenomController,
+        adresseController,
+        telephoneController,
+        nomEntrepriseController,
+        prenomPersonneContactController,
+        nomPersonneContactController,
+        posteTelephoniqueController,
+      );
     });
   }
 
@@ -43,7 +60,10 @@ class _UpdateState extends State<Update> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text("S'inscrire", style: TextStyle(color: Colors.white)),
+        title: const Text(
+          "Modification de profil",
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       body: Center(
         child: Column(
@@ -59,7 +79,8 @@ class _UpdateState extends State<Update> {
                 width: 400,
                 child: TextField(
                   controller: nomEntrepriseController,
-                  decoration: const InputDecoration(labelText: "Nom de l'entreprise"),
+                  decoration:
+                      const InputDecoration(labelText: "Nom de l'entreprise"),
                 ),
               ),
             ),
@@ -69,7 +90,8 @@ class _UpdateState extends State<Update> {
                 width: 400,
                 child: TextField(
                   controller: prenomPersonneContactController,
-                  decoration: const InputDecoration(labelText: "Prénom de la personne responsable"),
+                  decoration: const InputDecoration(
+                      labelText: "Prénom de la personne responsable"),
                 ),
               ),
             ),
@@ -79,7 +101,8 @@ class _UpdateState extends State<Update> {
                 width: 400,
                 child: TextField(
                   controller: nomPersonneContactController,
-                  decoration: const InputDecoration(labelText: "Nom de la personne responsable"),
+                  decoration: const InputDecoration(
+                      labelText: "Nom de la personne responsable"),
                 ),
               ),
             ),
@@ -107,14 +130,16 @@ class _UpdateState extends State<Update> {
               width: 400,
               child: TextField(
                 controller: adresseController,
-                decoration: const InputDecoration(labelText: 'Adresse complète'),
+                decoration:
+                    const InputDecoration(labelText: 'Adresse complète'),
               ),
             ),
             Container(
               width: 400,
               child: TextField(
                 controller: telephoneController,
-                decoration: const InputDecoration(labelText: 'Numéro de téléphone'),
+                decoration:
+                    const InputDecoration(labelText: 'Numéro de téléphone'),
               ),
             ),
             Visibility(
@@ -123,7 +148,8 @@ class _UpdateState extends State<Update> {
                 width: 400,
                 child: TextField(
                   controller: posteTelephoniqueController,
-                  decoration: const InputDecoration(labelText: "Poste téléphonique"),
+                  decoration:
+                      const InputDecoration(labelText: "Poste téléphonique"),
                 ),
               ),
             ),
@@ -145,7 +171,8 @@ class _UpdateState extends State<Update> {
                   String uid = getUserId();
                   Map<String, dynamic> newData = {
                     'nomEntreprise': nomEntrepriseController.text,
-                    'prenomPersonneContact': prenomPersonneContactController.text,
+                    'prenomPersonneContact':
+                        prenomPersonneContactController.text,
                     'nomPersonneContact': nomPersonneContactController.text,
                     'adresse': adresseController.text,
                     'telephone': telephoneController.text,
@@ -153,8 +180,20 @@ class _UpdateState extends State<Update> {
                   };
                   await updateEmployeurInfo(uid, newData);
                 }
+                // Set success message
+                setState(() {
+                  successMessage = 'Update reussi!';
+                });
               },
               child: const Text("Update"),
+            ),
+
+            // Display success message
+            Text(
+              successMessage,
+              style: const TextStyle(
+                color: Colors.green, // Customize the text color
+              ),
             ),
           ],
         ),

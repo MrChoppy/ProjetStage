@@ -18,7 +18,8 @@ class _CreationStageState extends State<CreationStage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ajouter un Stage'),
+        automaticallyImplyLeading: false,
+        title: const Text('Ajouter un Stage'),
       ),
       body: Center(
         child: Padding(
@@ -28,24 +29,24 @@ class _CreationStageState extends State<CreationStage> {
             children: <Widget>[
               TextField(
                 controller: titleController, // Store the entered text
-                decoration: InputDecoration(labelText: 'Titre'),
+                decoration: const InputDecoration(labelText: 'Titre'),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 controller: descriptionController, // Store the entered text
-                decoration: InputDecoration(labelText: 'Description'),
+                decoration: const InputDecoration(labelText: 'Description'),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 controller: locationController, // Store the entered text
-                decoration: InputDecoration(labelText: 'Location'),
+                decoration: const InputDecoration(labelText: 'Location'),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 controller: durationController, // Store the entered text
-                decoration: InputDecoration(labelText: 'Durée'),
+                decoration: const InputDecoration(labelText: 'Durée'),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   // Retrieve the text from the controllers and pass it to addStage
@@ -56,7 +57,7 @@ class _CreationStageState extends State<CreationStage> {
 
                   addStage(context, title, description, location, duration);
                 },
-                child: Text('Ajouter le Stage'),
+                child: const Text('Ajouter le Stage'),
               ),
             ],
           ),
