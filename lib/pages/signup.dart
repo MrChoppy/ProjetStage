@@ -52,10 +52,6 @@ class _SignupState extends State<Signup> {
   Widget build(BuildContext context) {
     // Create a FocusNode for the email field
     final emailFocusNode = FocusNode();
-
-    // Define a GlobalKey for the form to reset it later
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
