@@ -32,6 +32,7 @@ class _StagesState extends State<Stages> {
                 child: Text('Aucun stage disponible pour le moment.'),
               );
             }
+
             return ListView.builder(
               itemCount: stages.length,
               itemBuilder: (context, index) {
@@ -57,8 +58,20 @@ class _StagesState extends State<Stages> {
                         trailing: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text('Email: ${employerData?['email']}'),
-                            Text('Phone: ${employerData?['telephone']}'),
+                            Text(
+                              'Email: ${employerData?['email']}',
+                              style: const TextStyle(
+                                fontSize: 16, // Adjust the font size here
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              'Phone: ${employerData?['telephone']}',
+                              style: const TextStyle(
+                                fontSize: 16, // Adjust the font size here
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ],
                         ),
                       );
