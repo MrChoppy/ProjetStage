@@ -58,7 +58,7 @@ class _MenuEmployeurState extends State<MenuEmployeur> {
             label: 'Liste de vos stages',
           ),
           const BottomNavigationBarItem(
-            icon: Icon(Icons.list),
+            icon: Icon(Icons.add),
             label: 'Ajouter un stage',
           ),
           const BottomNavigationBarItem(
