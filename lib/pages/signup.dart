@@ -238,17 +238,18 @@ class _SignupState extends State<Signup> {
                     errorText =
                         "Email non valide. L'email doit avoir la syntaxe suivante : 1234567@cmontmorency.qc.ca.";
                   });
-                } else if (passwordController.text.isEmpty) {
-                  setState(() {
-                    errorText = "Le champ 'Mot de passe' est requis.";
-                  });
-                } else if (selectedUserType == "Employeur" &&
+                }  else if (selectedUserType == "Employeur" &&
                     !isEmailEmployeurValid(email)) {
                   setState(() {
                     errorText =
                         "Email non valide. L'email doit contenir un @ et un .";
                   });
-                } else {
+                  } else if (passwordController.text.isEmpty) {
+                  setState(() {
+                    errorText = "Le champ 'Mot de passe' est requis.";
+                  });
+                }
+                 else {
                   setState(() {
                     errorText = null;
                   });

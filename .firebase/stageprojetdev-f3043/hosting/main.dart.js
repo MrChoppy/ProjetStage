@@ -81182,7 +81182,11 @@ $S:487}
 A.oI.prototype={
 ad(){return new A.Ro(A.a([B.ME,B.CE,B.yz],t.p),B.i)}}
 A.Ro.prototype={
+<<<<<<< HEAD
 J(a){var s=A.lG(A.a([A.a43(null,B.mD,new A.ai8(a),null,null)],t.p),!1,B.Rr),r=this.d
+=======
+J(a){var s=A.lG(A.a([A.a43(null,B.mE,new A.ai8(a),null,null)],t.p),!1,B.Rr),r=this.d
+>>>>>>> 526cd8f568fb1192a106feda4ea43b5a0e906c72
 return A.mL(s,this.e[r],A.asx(r,A.a([B.zp,B.zn,B.kS],t.ur),new A.ai9(this)))}}
 A.ai8.prototype={
 $0(){var s=0,r=A.P(t.H),q=this,p
@@ -81207,7 +81211,11 @@ $S:0}
 A.oJ.prototype={
 ad(){return new A.Rp(A.a([B.MF,B.yz],t.p),B.i)}}
 A.Rp.prototype={
+<<<<<<< HEAD
 J(a){var s=A.lG(A.a([A.a43(null,B.mD,new A.aic(a),null,null)],t.p),!1,B.Rv),r=this.d
+=======
+J(a){var s=A.lG(A.a([A.a43(null,B.mE,new A.aic(a),null,null)],t.p),!1,B.Rv),r=this.d
+>>>>>>> 526cd8f568fb1192a106feda4ea43b5a0e906c72
 return A.mL(s,this.e[r],A.asx(r,A.a([B.zo,B.kS],t.ur),new A.aid(this)))}}
 A.aic.prototype={
 $0(){var s=0,r=A.P(t.H),q=this,p
@@ -81319,11 +81327,18 @@ if(f==="Employeur"&&l.z.a.a.length===0)l.ab(new A.akh(l))
 else{if(f==="\xc9tudiant"){r=A.fk(n,!0,!1)
 f=!r.b.test(j)}else f=!1
 if(f)l.ab(new A.aki(l))
+else{if(l.at==="Employeur"){q=A.fk(m,!0,!1)
+f=!q.b.test(j)}else f=!1
+if(f)l.ab(new A.akj(l))
 else{f=l.as
+<<<<<<< HEAD
 if(f.a.a.length===0)l.ab(new A.akj(l))
 else{if(l.at==="Employeur"){q=A.fk(m,!0,!1)
 p=!q.b.test(j)}else p=!1
 if(p)l.ab(new A.ak9(l))
+=======
+if(f.a.a.length===0)l.ab(new A.ak9(l))
+>>>>>>> 526cd8f568fb1192a106feda4ea43b5a0e906c72
 else{l.ab(new A.aka(l))
 if(l.at==="\xc9tudiant"){r=A.fk(n,!0,!1)
 if(r.b.test(j)){s=A.fk(o,!0,!1)
@@ -81362,10 +81377,10 @@ A.aki.prototype={
 $0(){this.a.ax="Email non valide. L'email doit avoir la syntaxe suivante : 1234567@cmontmorency.qc.ca."},
 $S:0}
 A.akj.prototype={
-$0(){this.a.ax="Le champ 'Mot de passe' est requis."},
+$0(){this.a.ax="Email non valide. L'email doit contenir un @ et un ."},
 $S:0}
 A.ak9.prototype={
-$0(){this.a.ax="Email non valide. L'email doit contenir un @ et un ."},
+$0(){this.a.ax="Le champ 'Mot de passe' est requis."},
 $S:0}
 A.aka.prototype={
 $0(){this.a.ax=null},
@@ -84098,9 +84113,15 @@ B.cy=new A.Gd(0,"none")
 B.w=new A.b1(B.l,0,B.cy,-1)
 B.hT=new A.dt(B.w,B.w,B.w,B.w)
 B.zm=new A.wb(null,null,null,null,null,null,null)
+<<<<<<< HEAD
 B.E4=new A.fc(57419,!1)
 B.mE=new A.ja(B.E4,null,null)
 B.zn=new A.nK(B.mE,B.mE,"Ajouter un stage")
+=======
+B.E4=new A.fc(57415,!1)
+B.mD=new A.ja(B.E4,null,null)
+B.zn=new A.nK(B.mD,B.mD,"Ajouter un stage")
+>>>>>>> 526cd8f568fb1192a106feda4ea43b5a0e906c72
 B.E7=new A.fc(58244,!0)
 B.f5=new A.ja(B.E7,null,null)
 B.zo=new A.nK(B.f5,B.f5,"Liste des stages")
@@ -84739,7 +84760,11 @@ B.Ed=new A.c7(null,null,null,null,null,B.l,null,null)
 B.Eb=new A.c7(24,0,400,0,48,B.l,1,null)
 B.mB=new A.c7(null,null,null,null,null,B.k,null,null)
 B.E6=new A.fc(57923,!1)
+<<<<<<< HEAD
 B.mD=new A.ja(B.E6,null,null)
+=======
+B.mE=new A.ja(B.E6,null,null)
+>>>>>>> 526cd8f568fb1192a106feda4ea43b5a0e906c72
 B.E5=new A.fc(57496,!1)
 B.Ee=new A.ja(B.E5,null,null)
 B.Ea=new A.fc(58727,!1)
