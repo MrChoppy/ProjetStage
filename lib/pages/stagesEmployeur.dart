@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '/authentication.dart'; // Import your authentication.dart file
+import '/authentication.dart';
 
 class StagesEmployeur extends StatefulWidget {
   const StagesEmployeur({super.key});
@@ -13,47 +13,67 @@ class StagesEmployeur extends StatefulWidget {
 class _StagesEmployeurState extends State<StagesEmployeur> {
   @override
   Widget build(BuildContext context) {
-    User? user = getCurrentUser(); // Get the current user
+    User? user = getCurrentUser();
     if (user != null) {
       String userId = user.uid;
 
       return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: const Text('Liste des Stages de l\'employeur'),
+          title: const Text('Liste de vos stages'),
         ),
         body: FutureBuilder<QuerySnapshot>(
-          future: vueStagesEmployeur(
-              userId), // Fetch stages for the current employer
+          future: vueStagesEmployeur(userId), // Get stages de l'employeur
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator(); // Show a loading indicator while fetching data
+              return const CircularProgressIndicator();
             } else if (snapshot.hasError) {
               return Text('Erreur : ${snapshot.error}');
             } else {
-              // Data has been fetched successfully
               final stages = snapshot.data!.docs;
 
               if (stages.isEmpty) {
                 return const Center(
-                  child: Text('Aucun stage disponible pour le moment.'),
+                  child: Text('Vous n\'avez aucun stage.'),
                 );
               }
 
-              return ListView.builder(
-                itemCount: stages.length,
-                itemBuilder: (context, index) {
-                  // Customize how each stage is displayed
-                  final stage = stages[index];
-                  final data = stage.data() as Map<String, dynamic>;
+              return Center(
+                child: SizedBox(
+                  width: 400,
+                  child: ListView.builder(
+                    itemCount: stages.length,
+                    itemBuilder: (context, index) {
+                      final stage = stages[index];
+                      final data = stage.data() as Map<String, dynamic>;
 
-                  return ListTile(
-                    title: Text(data['title'] ?? ''),
-                    subtitle: Text(data['description'] ?? ''),
-                    // Add more details or actions as needed
-                  );
-                },
+                      return Column(
+                        children: [
+                          ListTile(
+                            title: Text(
+                              data['poste'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text(
+                              data['description'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                          const Divider(
+                            color: Colors.grey,
+                            thickness: 1.0,
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
               );
             }
           },

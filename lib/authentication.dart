@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:projetdev/menus/menuEmployeur.dart';
-import 'package:projetdev/menus/menuEtudiant.dart';
+import 'package:projetdev/menus/menu_employeur.dart';
+import 'package:projetdev/menus/menu_etudiant.dart';
+import 'package:projetdev/pages/login.dart';
 
 //
 //
@@ -24,9 +25,8 @@ Future<void> signInWithEmailAndPassword(
     if (user != null) {
       String userId = user.uid;
       String userPerms = await getUserPerms(userId);
-      print(userPerms);
       if (context.mounted) {
-        _navigateBasedOnUserRole(userPerms, context);
+        navigateBasedOnUserRole(userPerms, context);
       }
     } else {
       print('User role not recognized.');
@@ -37,8 +37,13 @@ Future<void> signInWithEmailAndPassword(
 }
 
 // Déconnecter l'utilisateur
-Future<void> signOut() async {
+Future<void> signOut(BuildContext context) async {
   await FirebaseAuth.instance.signOut();
+  if (context.mounted) {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+      builder: (context) => const Login(),
+    ));
+  }
 }
 
 User? getCurrentUser() {
@@ -54,17 +59,17 @@ String getUserId() {
 Future<String> getUserPerms(String uid) async {
   try {
     // Vérifie si le document de l'utilisateur existe dans la collection 'employeur'
-    DocumentSnapshot employerDoc =
+    DocumentSnapshot employeurDoc =
         await FirebaseFirestore.instance.collection('employeur').doc(uid).get();
 
     // Vérifie si le document de l'utilisateur existe dans la collection 'etudiant'
-    DocumentSnapshot studentDoc =
+    DocumentSnapshot etudiantDoc =
         await FirebaseFirestore.instance.collection('etudiant').doc(uid).get();
 
     // Détermine les autorisations en fonction de l'existence du document
-    if (employerDoc.exists) {
+    if (employeurDoc.exists) {
       return 'Employeur';
-    } else if (studentDoc.exists) {
+    } else if (etudiantDoc.exists) {
       return 'Étudiant';
     } else {
       // Gère le cas où le document de l'utilisateur n'existe pas dans l'une ou l'autre collection
@@ -91,33 +96,41 @@ Future<void> updateUserTextFields(
   String uid = getUserId();
 
   if (userType == 'Étudiant') {
-    DocumentSnapshot studentSnapshot =
+    // Get le snapshot de l'étudiant
+    DocumentSnapshot etudiantSnapshot =
         await FirebaseFirestore.instance.collection('etudiant').doc(uid).get();
 
-    if (studentSnapshot.exists) {
-      Map<String, dynamic> studentData =
-          studentSnapshot.data() as Map<String, dynamic>;
-      nomController.text = studentData['nom'] ?? '';
-      prenomController.text = studentData['prenom'] ?? '';
-      adresseController.text = studentData['adresse'] ?? '';
-      telephoneController.text = studentData['telephone'] ?? '';
+    if (etudiantSnapshot.exists) {
+      // Get les données du snapshot
+      Map<String, dynamic> etudiantData =
+          etudiantSnapshot.data() as Map<String, dynamic>;
+
+      // Update les contrôleurs avec les données de l'étudiant
+      nomController.text = etudiantData['nom'] ?? '';
+      prenomController.text = etudiantData['prenom'] ?? '';
+      adresseController.text = etudiantData['adresse'] ?? '';
+      telephoneController.text = etudiantData['telephone'] ?? '';
     }
   } else if (userType == 'Employeur') {
-    DocumentSnapshot employerSnapshot =
+    // Get le snapshot de l'employeur
+    DocumentSnapshot employeurSnapshot =
         await FirebaseFirestore.instance.collection('employeur').doc(uid).get();
 
-    if (employerSnapshot.exists) {
-      Map<String, dynamic> employerData =
-          employerSnapshot.data() as Map<String, dynamic>;
-      nomEntrepriseController.text = employerData['nomEntreprise'] ?? '';
+    if (employeurSnapshot.exists) {
+      // Récupérer les données du snapshot
+      Map<String, dynamic> employeurData =
+          employeurSnapshot.data() as Map<String, dynamic>;
+
+      // Update les contrôleurs avec les données de l'employeur
+      nomEntrepriseController.text = employeurData['nomEntreprise'] ?? '';
       prenomPersonneContactController.text =
-          employerData['prenomPersonneContact'] ?? '';
+          employeurData['prenomPersonneContact'] ?? '';
       nomPersonneContactController.text =
-          employerData['nomPersonneContact'] ?? '';
-      adresseController.text = employerData['adresse'] ?? '';
-      telephoneController.text = employerData['telephone'] ?? '';
+          employeurData['nomPersonneContact'] ?? '';
+      adresseController.text = employeurData['adresse'] ?? '';
+      telephoneController.text = employeurData['telephone'] ?? '';
       posteTelephoniqueController.text =
-          employerData['posteTelephonique'] ?? '';
+          employeurData['posteTelephonique'] ?? '';
     }
   }
 }
@@ -127,20 +140,20 @@ Future<void> updateUserTextFields(
 //  VUES
 //
 //
-void _navigateBasedOnUserRole(String userPerms, BuildContext context) {
+void navigateBasedOnUserRole(String userPerms, BuildContext context) {
   switch (userPerms) {
     case 'Étudiant':
-      _navigateToVueEtudiant(context);
+      navigateToVueEtudiant(context);
       break;
     case 'Employeur':
-      _navigateToVueEmployeur(context);
+      navigateToVueEmployeur(context);
       break;
     default:
-      print('User role not recognized.');
+      print('User role pas reconu.');
   }
 }
 
-void _navigateToVueEtudiant(BuildContext context) {
+void navigateToVueEtudiant(BuildContext context) {
   Navigator.of(context).pushReplacement(
     MaterialPageRoute(
       builder: (context) => const MenuEtudiant(),
@@ -148,7 +161,7 @@ void _navigateToVueEtudiant(BuildContext context) {
   );
 }
 
-void _navigateToVueEmployeur(BuildContext context) {
+void navigateToVueEmployeur(BuildContext context) {
   Navigator.of(context).pushReplacement(
     MaterialPageRoute(
       builder: (context) => const MenuEmployeur(),
@@ -194,10 +207,10 @@ Future<void> signUpWithEmailAndPasswordEtudiant(
         'perms': "etudiant",
       });
       //change de page
+      String userId = user.uid;
+      String userPerms = await getUserPerms(userId);
       if (context.mounted) {
-        String userId = user.uid;
-        String userPerms = await getUserPerms(userId);
-        _navigateBasedOnUserRole(userPerms, context);
+        navigateBasedOnUserRole(userPerms, context);
       }
     }
   } catch (e) {
@@ -244,20 +257,20 @@ Future<QuerySnapshot> vueStages() async {
   }
 }
 
-Future<Map<String, dynamic>> getEmployerInfo(String employerId) async {
+Future<Map<String, dynamic>> getEmployeurInfo(String employeurId) async {
   try {
-    DocumentSnapshot employerSnapshot = await FirebaseFirestore.instance
+    DocumentSnapshot employeurSnapshot = await FirebaseFirestore.instance
         .collection('employeur')
-        .doc(employerId)
+        .doc(employeurId)
         .get();
 
-    if (employerSnapshot.exists) {
-      return employerSnapshot.data() as Map<String, dynamic>;
+    if (employeurSnapshot.exists) {
+      return employeurSnapshot.data() as Map<String, dynamic>;
     } else {
-      return {}; // Return an empty map if the employer doesn't exist
+      return {}; // Return map vide si l'employeur n'existe pas
     }
   } catch (e) {
-    print('Error fetching employer info: $e');
+    print('Error fetching employeur info: $e');
     return {};
   }
 }
@@ -269,7 +282,6 @@ Future<Map<String, dynamic>> getEmployerInfo(String employerId) async {
 //
 
 Future<void> signUpWithEmailAndPasswordEmployeur(
-  //AJOUTE: String prenom, String nom,  etc.
   BuildContext context,
   String email,
   String password,
@@ -306,10 +318,10 @@ Future<void> signUpWithEmailAndPasswordEmployeur(
         'perms': "employeur",
       });
       //change de page
+      String userId = user.uid;
+      String userPerms = await getUserPerms(userId);
       if (context.mounted) {
-        String userId = user.uid;
-        String userPerms = await getUserPerms(userId);
-        _navigateBasedOnUserRole(userPerms, context);
+        navigateBasedOnUserRole(userPerms, context);
       }
     }
   } catch (e) {
@@ -349,12 +361,13 @@ Future<void> updateEmployeurInfo(
 }
 
 Future<void> addStage(
-  BuildContext context,
-  String title,
-  String description,
-  String location,
-  String duration,
-) async {
+    BuildContext context,
+    String poste,
+    String compagnie,
+    String adresse,
+    String dateDebut,
+    String dateFin,
+    String description) async {
   try {
     User? user = getCurrentUser();
     if (user != null) {
@@ -366,11 +379,12 @@ Future<void> addStage(
         // Ajoute le stage à la base de données dans la collection "stages"
         await FirebaseFirestore.instance.collection('stages').add({
           'employeurId': userId,
-          'title': title,
+          'poste': poste,
+          'compagnie': compagnie,
+          'adresse': adresse,
+          'dateDebut': dateDebut,
+          'dateFin': dateFin,
           'description': description,
-          'location': location,
-          'duration': duration,
-          //autre
         });
       } else {
         print('Vous n\'avez pas l\'autorisation d\'ajouter des stages.');
@@ -388,6 +402,6 @@ Future<QuerySnapshot> vueStagesEmployeur(String uid) async {
         .where('employeurId', isEqualTo: uid)
         .get();
   } catch (e) {
-    throw Exception('Error fetching stages: $e');
+    throw Exception('Error get stages: $e');
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '/authentication.dart';
+import 'package:intl/intl.dart';
 
 class CreationStage extends StatefulWidget {
   const CreationStage({super.key});
@@ -9,10 +10,34 @@ class CreationStage extends StatefulWidget {
 }
 
 class _CreationStageState extends State<CreationStage> {
-  TextEditingController titleController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
-  TextEditingController locationController = TextEditingController();
-  TextEditingController durationController = TextEditingController();
+  final TextEditingController posteController = TextEditingController();
+  final TextEditingController compagnieController = TextEditingController();
+  final TextEditingController adresseController = TextEditingController();
+  final TextEditingController dateDebutController = TextEditingController();
+  final TextEditingController dateFinController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+
+  late DateTime selectedDate;
+  String successMessage = '';
+  Future<void> _selectDate(
+    BuildContext context,
+    TextEditingController dateController,
+  ) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2023),
+      lastDate: DateTime(2030),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        selectedDate = pickedDate;
+        String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+        dateController.text = formattedDate;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,42 +47,63 @@ class _CreationStageState extends State<CreationStage> {
         title: const Text('Ajouter un Stage'),
       ),
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+        child: Container(
+          width: 400.0,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              TextField(
-                controller: titleController, // Store the entered text
-                decoration: const InputDecoration(labelText: 'Titre'),
+              TextFormField(
+                controller: posteController,
+                decoration:
+                    const InputDecoration(labelText: 'Poste du stagiaire : '),
               ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: descriptionController, // Store the entered text
-                decoration: const InputDecoration(labelText: 'Description'),
+              TextFormField(
+                controller: compagnieController,
+                decoration: const InputDecoration(labelText: 'Compagnie : '),
               ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: locationController, // Store the entered text
-                decoration: const InputDecoration(labelText: 'Location'),
+              TextFormField(
+                controller: adresseController,
+                decoration: const InputDecoration(labelText: 'Adresse : '),
               ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: durationController, // Store the entered text
-                decoration: const InputDecoration(labelText: 'Durée'),
+              TextFormField(
+                controller: dateDebutController,
+                decoration: const InputDecoration(labelText: 'Date du debut'),
+                onTap: () => _selectDate(context, dateDebutController),
               ),
-              const SizedBox(height: 20),
+              TextFormField(
+                controller: dateFinController,
+                decoration: const InputDecoration(labelText: 'Date de fin'),
+                onTap: () => _selectDate(context, dateFinController),
+              ),
+              TextFormField(
+                controller: descriptionController,
+                decoration: const InputDecoration(
+                    labelText: 'Description des tâches :'),
+                maxLines: 3,
+              ),
+              const SizedBox(height: 12),
               ElevatedButton(
                 onPressed: () {
-                  // Retrieve the text from the controllers and pass it to addStage
-                  String title = titleController.text;
+                  String poste = posteController.text;
+                  String compagnie = compagnieController.text;
+                  String adresse = adresseController.text;
                   String description = descriptionController.text;
-                  String location = locationController.text;
-                  String duration = durationController.text;
+                  String dateDebut = dateDebutController.text;
+                  String dateFin = dateFinController.text;
 
-                  addStage(context, title, description, location, duration);
+                  addStage(context, poste, compagnie, adresse, dateDebut,
+                      dateFin, description);
+                  setState(() {
+                    successMessage = 'Stage ajouté!';
+                  });
                 },
                 child: const Text('Ajouter le Stage'),
+              ),
+              Text(
+                successMessage,
+                style: const TextStyle(
+                  color: Colors.green,
+                ),
               ),
             ],
           ),

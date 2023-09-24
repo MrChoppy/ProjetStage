@@ -33,52 +33,77 @@ class _StagesState extends State<Stages> {
               );
             }
 
-            return ListView.builder(
-              itemCount: stages.length,
-              itemBuilder: (context, index) {
-                final stage = stages[index];
-                final data = stage.data() as Map<String, dynamic>;
+            return Center(
+              child: SizedBox(
+                width: 700,
+                height: MediaQuery.of(context).size.height * 0.7,
+                child: ListView.builder(
+                  itemCount: stages.length,
+                  itemBuilder: (context, index) {
+                    final stage = stages[index];
+                    final data = stage.data() as Map<String, dynamic>;
 
-                return FutureBuilder<Map<String, dynamic>>(
-                  future: getEmployerInfo(data['employeurId']),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<Map<String, dynamic>> employerSnapshot) {
-                    if (employerSnapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
-                    } else if (employerSnapshot.hasError) {
-                      return Text('Erreur : ${employerSnapshot.error}');
-                    } else {
-                      final employerData = employerSnapshot.data;
+                    return FutureBuilder<Map<String, dynamic>>(
+                      future: getEmployeurInfo(data['employeurId']),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<Map<String, dynamic>>
+                              employeurSnapshot) {
+                        if (employeurSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        } else if (employeurSnapshot.hasError) {
+                          return Text('Erreur : ${employeurSnapshot.error}');
+                        } else {
+                          final employeurData = employeurSnapshot.data;
 
-                      return ListTile(
-                        title: Text(data['title'] ?? ''),
-                        subtitle: Text(data['description'] ?? ''),
-                        // Add more details or actions as needed
-                        trailing: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              'Email: ${employerData?['email']}',
-                              style: const TextStyle(
-                                fontSize: 16, // Adjust the font size here
-                                fontWeight: FontWeight.bold,
+                          return Column(
+                            children: [
+                              ListTile(
+                                title: Text(
+                                  data['poste'] ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  data['description'] ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                trailing: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      'Email: ${employeurData?['email']}',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Phone: ${employeurData?['telephone']}',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            Text(
-                              'Phone: ${employerData?['telephone']}',
-                              style: const TextStyle(
-                                fontSize: 16, // Adjust the font size here
-                                fontWeight: FontWeight.bold,
+                              const Divider(
+                                color: Colors.grey,
+                                thickness: 1.0,
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
+                            ],
+                          );
+                        }
+                      },
+                    );
                   },
-                );
-              },
+                ),
+              ),
             );
           }
         },

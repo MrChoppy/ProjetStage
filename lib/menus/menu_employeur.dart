@@ -1,22 +1,21 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
 import 'package:projetdev/authentication.dart';
-import 'package:projetdev/pages/login.dart';
-import 'package:projetdev/pages/stages.dart';
+import 'package:projetdev/pages/creationStage.dart';
+import 'package:projetdev/pages/stagesEmployeur.dart';
 import 'package:projetdev/pages/update.dart';
 
-class MenuEtudiant extends StatefulWidget {
-  const MenuEtudiant({super.key});
+class MenuEmployeur extends StatefulWidget {
+  const MenuEmployeur({super.key});
 
   @override
-  _MenuEtudiantState createState() => _MenuEtudiantState();
+  _MenuEmployeurState createState() => _MenuEmployeurState();
 }
 
-class _MenuEtudiantState extends State<MenuEtudiant> {
+class _MenuEmployeurState extends State<MenuEmployeur> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
-    const Stages(),
+    const StagesEmployeur(),
+    const CreationStage(),
     const Update(),
   ];
 
@@ -25,19 +24,12 @@ class _MenuEtudiantState extends State<MenuEtudiant> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Connecte en tant qu\'utilisateur'),
+        title: const Text('Connecté en tant qu\'employeur'),
         actions: [
           IconButton(
             icon: const Icon(Icons.exit_to_app),
             onPressed: () async {
-              await signOut();
-              if (context.mounted) {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const Login(),
-                  ),
-                );
-              }
+              await signOut(context);
             },
           ),
         ],
@@ -50,12 +42,16 @@ class _MenuEtudiantState extends State<MenuEtudiant> {
             _currentIndex = index;
           });
         },
-        items: [
-          const BottomNavigationBarItem(
+        items: const [
+          BottomNavigationBarItem(
             icon: Icon(Icons.list),
-            label: 'Liste des stages',
+            label: 'Liste de vos stages',
           ),
-          const BottomNavigationBarItem(
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_box),
+            label: 'Ajouter un stage',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Modifier profil',
           )
@@ -67,6 +63,6 @@ class _MenuEtudiantState extends State<MenuEtudiant> {
 
 void main() {
   runApp(const MaterialApp(
-    home: MenuEtudiant(),
+    home: MenuEmployeur(),
   ));
 }

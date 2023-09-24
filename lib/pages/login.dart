@@ -25,7 +25,7 @@ class _LoginState extends State<Login> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Container(
+            SizedBox(
               width: 250,
               child: TextField(
                 controller: emailController,
@@ -35,7 +35,7 @@ class _LoginState extends State<Login> {
               ),
             ),
             const SizedBox(height: 12),
-            Container(
+            SizedBox(
               width: 250,
               child: TextField(
                 controller: passwordController,

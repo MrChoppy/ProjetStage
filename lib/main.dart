@@ -3,8 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:projetdev/firebase_options.dart';
 import 'package:projetdev/authentication.dart';
-import 'package:projetdev/menus/menuEmployeur.dart';
-import 'package:projetdev/menus/menuEtudiant.dart';
+import 'package:projetdev/menus/menu_employeur.dart';
+import 'package:projetdev/menus/menu_etudiant.dart';
 import './pages/login.dart';
 
 void main() async {
@@ -26,20 +26,19 @@ class MyApp extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (BuildContext context, AsyncSnapshot<User?> userSnapshot) {
           if (userSnapshot.connectionState == ConnectionState.waiting) {
-            // Return a loading indicator while checking the user's state
+            // Renvoyer un indicateur de chargement pendant la vérification de l'état de l'utilisateur
             return const CircularProgressIndicator();
           } else {
-            // Check if the user is authenticated or not
+            // Vérifier si l'utilisateur est authentifié ou non
             final user = userSnapshot.data;
             if (user == null) {
-              // If not authenticated, navigate to the login page
+              // Si non authentifié, naviguer vers la page de login
               return const Login();
             } else {
-              // If authenticated, determine the user's role and navigate accordingly
+              // Si authentifié, déterminer le rôle de l'utilisateur et envoyer vers la bonne page
               final userId = user.uid;
               return FutureBuilder<String>(
-                future: getUserPerms(
-                    userId), // Replace with your function to get user role
+                future: getUserPerms(userId),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();
@@ -48,14 +47,14 @@ class MyApp extends StatelessWidget {
                   } else {
                     final userRole = snapshot.data;
                     if (userRole == 'Employeur') {
-                      // Navigate to the Employeur page
+                      // Naviguer vers la page Employeur
                       return const MenuEmployeur();
                     } else if (userRole == 'Étudiant') {
-                      // Navigate to the Étudiant page
+                      // Naviguer vers la page Étudiant
                       return const MenuEtudiant();
                     } else {
-                      // Handle unrecognized user roles
-                      return const Text('User role not recognized');
+                      // Gérer les rôles d'utilisateur non reconnus
+                      return const Text('Rôle de l\'utilisateur non reconnu');
                     }
                   }
                 },

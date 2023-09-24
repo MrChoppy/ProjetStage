@@ -1,7 +1,5 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
-import 'login.dart'; // Import your login screen
+import 'login.dart';
 import '/authentication.dart';
 
 class Signup extends StatefulWidget {
@@ -28,12 +26,11 @@ class _SignupState extends State<Signup> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  String selectedUserType = 'Étudiant'; // Default selected user type
+  String selectedUserType = 'Étudiant';
   String? errorText;
-  final List<String> userTypes = ['Étudiant', 'Employeur']; // Dropdown options
+  final List<String> userTypes = ['Étudiant', 'Employeur'];
 
   bool isEmailValid(String email) {
-    // Change this regular expression as needed for your specific validation
     final emailRegex = RegExp(r'^\d{7}@cmontmorency\.qc\.ca$');
     return emailRegex.hasMatch(email);
   }
@@ -50,7 +47,6 @@ class _SignupState extends State<Signup> {
 
   @override
   Widget build(BuildContext context) {
-    // Create a FocusNode for the email field
     final emailFocusNode = FocusNode();
     return Scaffold(
       appBar: AppBar(
@@ -61,8 +57,8 @@ class _SignupState extends State<Signup> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Container(
-              width: 400, // Set the desired width
+            SizedBox(
+              width: 400,
               child: DropdownButtonFormField<String>(
                 value: selectedUserType,
                 onChanged: (newValue) {
@@ -83,7 +79,7 @@ class _SignupState extends State<Signup> {
             ),
             Visibility(
               visible: selectedUserType == 'Employeur',
-              child: Container(
+              child: SizedBox(
                 width: 400,
                 child: TextField(
                   controller: nomEntrepriseController,
@@ -93,7 +89,7 @@ class _SignupState extends State<Signup> {
             ),
             Visibility(
               visible: selectedUserType == 'Employeur',
-              child: Container(
+              child: SizedBox(
                 width: 400,
                 child: TextField(
                   controller: prenomPersonneContactController,
@@ -104,7 +100,7 @@ class _SignupState extends State<Signup> {
             ),
             Visibility(
               visible: selectedUserType == 'Employeur',
-              child: Container(
+              child: SizedBox(
                 width: 400,
                 child: TextField(
                   controller: nomPersonneContactController,
@@ -115,7 +111,7 @@ class _SignupState extends State<Signup> {
             ),
             Visibility(
               visible: selectedUserType == 'Étudiant',
-              child: Container(
+              child: SizedBox(
                 width: 400,
                 child: TextField(
                   controller: prenomController,
@@ -125,7 +121,7 @@ class _SignupState extends State<Signup> {
             ),
             Visibility(
               visible: selectedUserType == 'Étudiant',
-              child: Container(
+              child: SizedBox(
                 width: 400,
                 child: TextField(
                   controller: nomController,
@@ -133,16 +129,16 @@ class _SignupState extends State<Signup> {
                 ),
               ),
             ),
-            Container(
-              width: 400, // Set the desired width
+            SizedBox(
+              width: 400,
               child: TextField(
                 controller: adresseController,
                 decoration:
                     const InputDecoration(labelText: 'Adresse complète'),
               ),
             ),
-            Container(
-              width: 400, // Set the desired width
+            SizedBox(
+              width: 400,
               child: TextField(
                 controller: telephoneController,
                 decoration:
@@ -151,7 +147,7 @@ class _SignupState extends State<Signup> {
             ),
             Visibility(
               visible: selectedUserType == 'Employeur',
-              child: Container(
+              child: SizedBox(
                 width: 400,
                 child: TextField(
                   controller: posteTelephoniqueController,
@@ -182,11 +178,9 @@ class _SignupState extends State<Signup> {
                 ],
               ),
             ),
-            //const SizedBox(height: 25),
             if (errorText != null)
               Container(
-                margin:
-                    const EdgeInsets.only(top: 2.0), // Add margin to the top
+                margin: const EdgeInsets.only(top: 2.0),
                 child: Text(
                   errorText!,
                   style: const TextStyle(color: Colors.red),
@@ -256,10 +250,8 @@ class _SignupState extends State<Signup> {
                   });
                 } else {
                   setState(() {
-                    errorText =
-                        null; // Reset errorText when all conditions are met
+                    errorText = null;
                   });
-                  // Perform sign-up here
                   if (selectedUserType == "Étudiant" &&
                       isEmailValid(email) &&
                       isPhoneValid(phoneNumber)) {
@@ -289,11 +281,9 @@ class _SignupState extends State<Signup> {
               },
               child: const Text("S'inscrire"),
             ),
-
             const SizedBox(height: 12),
             TextButton(
               onPressed: () {
-                // Navigate to the login page when the button is pressed
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (context) => const Login(),
                 ));

@@ -14,7 +14,6 @@ class _UpdateState extends State<Update> {
   final TextEditingController prenomController = TextEditingController();
   final TextEditingController adresseController = TextEditingController();
   final TextEditingController telephoneController = TextEditingController();
-
   final TextEditingController nomEntrepriseController = TextEditingController();
   final TextEditingController prenomPersonneContactController =
       TextEditingController();
@@ -26,7 +25,7 @@ class _UpdateState extends State<Update> {
   User? user = getCurrentUser();
   late Future<String> userType;
   String? userTypeValue;
-  String successMessage = ''; // Define success message
+  String successMessage = '';
 
   @override
   void initState() {
@@ -40,7 +39,6 @@ class _UpdateState extends State<Update> {
         userTypeValue = value;
       });
 
-      // Fill text fields with user information from the database
       await updateUserTextFields(
         userTypeValue!,
         nomController,
@@ -75,7 +73,7 @@ class _UpdateState extends State<Update> {
             ),
             Visibility(
               visible: userTypeValue == 'Employeur',
-              child: Container(
+              child: SizedBox(
                 width: 400,
                 child: TextField(
                   controller: nomEntrepriseController,
@@ -86,7 +84,7 @@ class _UpdateState extends State<Update> {
             ),
             Visibility(
               visible: userTypeValue == 'Employeur',
-              child: Container(
+              child: SizedBox(
                 width: 400,
                 child: TextField(
                   controller: prenomPersonneContactController,
@@ -97,7 +95,7 @@ class _UpdateState extends State<Update> {
             ),
             Visibility(
               visible: userTypeValue == 'Employeur',
-              child: Container(
+              child: SizedBox(
                 width: 400,
                 child: TextField(
                   controller: nomPersonneContactController,
@@ -108,7 +106,7 @@ class _UpdateState extends State<Update> {
             ),
             Visibility(
               visible: userTypeValue == 'Étudiant',
-              child: Container(
+              child: SizedBox(
                 width: 400,
                 child: TextField(
                   controller: prenomController,
@@ -118,7 +116,7 @@ class _UpdateState extends State<Update> {
             ),
             Visibility(
               visible: userTypeValue == 'Étudiant',
-              child: Container(
+              child: SizedBox(
                 width: 400,
                 child: TextField(
                   controller: nomController,
@@ -126,7 +124,7 @@ class _UpdateState extends State<Update> {
                 ),
               ),
             ),
-            Container(
+            SizedBox(
               width: 400,
               child: TextField(
                 controller: adresseController,
@@ -134,7 +132,7 @@ class _UpdateState extends State<Update> {
                     const InputDecoration(labelText: 'Adresse complète'),
               ),
             ),
-            Container(
+            SizedBox(
               width: 400,
               child: TextField(
                 controller: telephoneController,
@@ -144,7 +142,7 @@ class _UpdateState extends State<Update> {
             ),
             Visibility(
               visible: userTypeValue == 'Employeur',
-              child: Container(
+              child: SizedBox(
                 width: 400,
                 child: TextField(
                   controller: posteTelephoniqueController,
@@ -157,7 +155,6 @@ class _UpdateState extends State<Update> {
             ElevatedButton(
               onPressed: () async {
                 if (userTypeValue == "Étudiant") {
-                  // Update student info
                   String uid = getUserId();
                   Map<String, dynamic> newData = {
                     'nom': nomController.text,
@@ -167,7 +164,6 @@ class _UpdateState extends State<Update> {
                   };
                   await updateEtudiantInfo(uid, newData);
                 } else if (userTypeValue == "Employeur") {
-                  // Update employer info
                   String uid = getUserId();
                   Map<String, dynamic> newData = {
                     'nomEntreprise': nomEntrepriseController.text,
@@ -180,7 +176,7 @@ class _UpdateState extends State<Update> {
                   };
                   await updateEmployeurInfo(uid, newData);
                 }
-                // Set success message
+                // success message
                 setState(() {
                   successMessage = 'Update reussi!';
                 });
@@ -188,11 +184,11 @@ class _UpdateState extends State<Update> {
               child: const Text("Update"),
             ),
 
-            // Display success message
+            // success message
             Text(
               successMessage,
               style: const TextStyle(
-                color: Colors.green, // Customize the text color
+                color: Colors.green,
               ),
             ),
           ],
