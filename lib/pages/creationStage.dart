@@ -31,14 +31,13 @@ class _CreationStageState extends State<CreationStage> {
     );
 
     if (pickedDate != null) {
-      setState(() {
-        selectedDate = pickedDate;
-        String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
-        dateController.text = formattedDate;
-      });
+    setState(() {
+      selectedDate = pickedDate;
+      String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+      dateController.text = formattedDate;
+    });
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

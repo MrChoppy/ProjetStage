@@ -10,6 +10,42 @@ class Stages extends StatefulWidget {
 }
 
 class _StagesState extends State<Stages> {
+  final TextEditingController _applicationMessageController =
+      TextEditingController();
+
+  void _showApplyDialog(
+      Map<String, dynamic> stageData, Map<String, dynamic> employeurData) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Détails du stage'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Poste : ${stageData['poste'] ?? ''}'),
+              Text('Description : ${stageData['description'] ?? ''}'),
+              Text('Email de l\'employeur : ${employeurData?['email'] ?? ''}'),
+              Text(
+                  'Téléphone de l\'employeur : ${employeurData?['telephone'] ?? ''}'),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                // Ajoutez ici la logique pour envoyer la candidature.
+                // Une fois la candidature envoyée, fermez le popup.
+                Navigator.of(context).pop();
+              },
+              child: Text('POSTULER'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,6 +127,31 @@ class _StagesState extends State<Stages> {
                                     ),
                                   ],
                                 ),
+                                onTap: () {
+                                  if (employeurData != null) {
+                                    _showApplyDialog(data, employeurData);
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text('Erreur'),
+                                          content: Text(
+                                              'Les informations de l\'employeur ne sont plus disponibles.'),
+                                          actions: [
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop(); // Ferme le popup d'erreur.
+                                              },
+                                              child: Text('OK'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  }
+                                },
                               ),
                               const Divider(
                                 color: Colors.grey,
