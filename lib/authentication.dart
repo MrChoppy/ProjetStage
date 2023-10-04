@@ -84,7 +84,7 @@ Future<String> getUserPerms(String uid) async {
 
 Future<void> updateUserTextFields(
   String userType,
-  TextEditingController nomController,
+  TextEditingController nomController,  
   TextEditingController prenomController,
   TextEditingController adresseController,
   TextEditingController telephoneController,
@@ -110,6 +110,7 @@ Future<void> updateUserTextFields(
       prenomController.text = etudiantData['prenom'] ?? '';
       adresseController.text = etudiantData['adresse'] ?? '';
       telephoneController.text = etudiantData['telephone'] ?? '';
+      
     }
   } else if (userType == 'Employeur') {
     // Get le snapshot de l'employeur
@@ -403,5 +404,52 @@ Future<QuerySnapshot> vueStagesEmployeur(String uid) async {
         .get();
   } catch (e) {
     throw Exception('Error get stages: $e');
+  }
+}
+
+
+
+//STAGES
+
+//Get stage sur lequel on click
+Future<DocumentSnapshot> getStageInfo(String stageId) async {
+  try {
+    return await FirebaseFirestore.instance.collection('stages').doc(stageId).get();
+  } catch (e) {
+    print('Error fetching stage info: $e');
+    throw Exception('Error fetching stage info: $e');
+  }
+}
+
+//Get les donnees de la page et call updateStageInfo()
+Future<void> updateStage(String stageId, String posteController, 
+    String compagnieController, String adresseController,
+    String dateDebutController, String dateFinController,
+    String descriptionController) async {
+  try {
+    Map<String, dynamic> newData = {
+      'poste': posteController,
+      'compagnie': compagnieController,
+      'adresse': adresseController,
+      'dateDebut': dateDebutController,
+      'dateFin': dateFinController,
+      'description': descriptionController,
+    };
+
+    await updateStageInfo(stageId, newData);
+    
+  } catch (e) {
+    print('Error updating stage: $e');
+
+  }
+}
+
+//Update les donnees
+Future<void> updateStageInfo(String stageId, Map<String, dynamic> newData) async {
+  try {
+    await FirebaseFirestore.instance.collection('stages').doc(stageId).update(newData);
+  } catch (e) {
+    print('Error updating stage info: $e');
+    throw Exception('Error updating stage info: $e');
   }
 }
