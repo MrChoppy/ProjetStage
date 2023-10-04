@@ -14,6 +14,7 @@ class _UpdateState extends State<Update> {
   final TextEditingController prenomController = TextEditingController();
   final TextEditingController adresseController = TextEditingController();
   final TextEditingController telephoneController = TextEditingController();
+  final TextEditingController remarquesController = TextEditingController();
   final TextEditingController nomEntrepriseController = TextEditingController();
   final TextEditingController prenomPersonneContactController =
       TextEditingController();
@@ -138,6 +139,17 @@ class _UpdateState extends State<Update> {
                 controller: telephoneController,
                 decoration:
                     const InputDecoration(labelText: 'Numéro de téléphone'),
+              ),
+            ),
+            Visibility(
+              visible: userTypeValue == 'Étudiant',
+              child: SizedBox(
+                width: 400,
+                child: TextField(
+                  controller: remarquesController,
+                  decoration: const InputDecoration(
+                      labelText: "Remarques"),
+                ),
               ),
             ),
             Visibility(
