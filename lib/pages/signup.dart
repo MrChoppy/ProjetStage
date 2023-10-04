@@ -22,6 +22,7 @@ class _SignupState extends State<Signup> {
       TextEditingController();
   final TextEditingController posteTelephoniqueController =
       TextEditingController();
+  final TextEditingController remarquesController = TextEditingController();
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -143,6 +144,16 @@ class _SignupState extends State<Signup> {
                 controller: telephoneController,
                 decoration:
                     const InputDecoration(labelText: 'Numéro de téléphone'),
+              ),
+            ),
+            Visibility(
+              visible: selectedUserType == 'Étudiant',
+              child: SizedBox(
+                width: 400,
+                child: TextField(
+                  controller: remarquesController,
+                  decoration: InputDecoration(labelText: "Remarques"),
+                ),
               ),
             ),
             Visibility(
