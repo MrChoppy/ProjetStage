@@ -274,6 +274,7 @@ class _SignupState extends State<Signup> {
                         nomController.text,
                         prenomController.text,
                         telephoneController.text,
+                        remarquesController.text,
                         adresseController.text);
                   } else if (selectedUserType == "Employeur" &&
                       isPhoneValid(phoneNumber) &&

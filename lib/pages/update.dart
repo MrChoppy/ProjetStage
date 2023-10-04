@@ -50,6 +50,7 @@ class _UpdateState extends State<Update> {
         prenomPersonneContactController,
         nomPersonneContactController,
         posteTelephoniqueController,
+        remarquesController
       );
     });
   }

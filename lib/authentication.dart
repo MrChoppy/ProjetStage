@@ -88,6 +88,7 @@ Future<void> updateUserTextFields(
   TextEditingController prenomController,
   TextEditingController adresseController,
   TextEditingController telephoneController,
+  TextEditingController remarquesController,
   TextEditingController nomEntrepriseController,
   TextEditingController prenomPersonneContactController,
   TextEditingController nomPersonneContactController,
@@ -110,6 +111,7 @@ Future<void> updateUserTextFields(
       prenomController.text = etudiantData['prenom'] ?? '';
       adresseController.text = etudiantData['adresse'] ?? '';
       telephoneController.text = etudiantData['telephone'] ?? '';
+      remarquesController.text = etudiantData['remarques'] ?? '';
     }
   } else if (userType == 'Employeur') {
     // Get le snapshot de l'employeur
@@ -182,6 +184,7 @@ Future<void> signUpWithEmailAndPasswordEtudiant(
   String nom,
   String prenom,
   String telephone,
+  String remarques,
   String adresse,
 ) async {
   try {
@@ -203,6 +206,7 @@ Future<void> signUpWithEmailAndPasswordEtudiant(
         'nom': nom,
         'prenom': prenom,
         'telephone': telephone,
+        'remarques': remarques,
         'adresse': adresse,
         'perms': "etudiant",
       });
