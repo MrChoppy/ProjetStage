@@ -112,8 +112,6 @@ Future<void> updateUserTextFields(
       adresseController.text = etudiantData['adresse'] ?? '';
       telephoneController.text = etudiantData['telephone'] ?? '';
       remarquesController.text = etudiantData['remarques'] ?? '';
-
-      print(etudiantData['remarques']);
     }
     
   } else if (userType == 'Employeur') {
