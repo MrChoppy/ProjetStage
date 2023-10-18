@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../authentication.dart';
+import 'package:intl/intl.dart';
 
 class ModifierStage extends StatefulWidget {
   final DocumentSnapshot stage;
@@ -20,6 +21,27 @@ class _ModifierStageState extends State<ModifierStage> {
   late TextEditingController descriptionController;
   String successMessage = '';
 
+  late DateTime selectedDate;
+
+ Future<void> _selectDate(
+    BuildContext context,
+    TextEditingController dateController,
+  ) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2023),
+      lastDate: DateTime(2030),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        selectedDate = pickedDate;
+        String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+        dateController.text = formattedDate;
+      });
+    }
+  }
   @override
   void initState() {
     super.initState();
@@ -52,53 +74,39 @@ class _ModifierStageState extends State<ModifierStage> {
           title: const Text('Modifier le stage'),
         ),
   body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+        child: SizedBox(
+          width: 400.0,
           child: Column(
-            children: [
-              SizedBox(
-                width: 400,
-                child: TextField(
-                  controller: posteController,
-                  decoration: const InputDecoration(labelText: 'Poste'),
-                ),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              TextFormField(
+                controller: posteController,
+                decoration:
+                    const InputDecoration(labelText: 'Poste du stagiaire : '),
               ),
-              SizedBox(
-                width: 400,
-                child: TextField(
-                  controller: compagnieController,
-                  decoration: const InputDecoration(labelText: 'Compagnie'),
-                ),
+              TextFormField(
+                controller: compagnieController,
+                decoration: const InputDecoration(labelText: 'Compagnie : '),
               ),
-              SizedBox(
-                width: 400,
-                child: TextField(
-                  controller: adresseController,
-                  decoration: const InputDecoration(labelText: 'Adresse'),
-                ),
+              TextFormField(
+                controller: adresseController,
+                decoration: const InputDecoration(labelText: 'Adresse : '),
               ),
-              SizedBox(
-                width: 400,
-                child: TextField(
-                  controller: dateDebutController,
-                  decoration:
-                      const InputDecoration(labelText: 'Date de début'),
-                ),
+              TextFormField(
+                controller: dateDebutController,
+                decoration: const InputDecoration(labelText: 'Date du debut'),
+                onTap: () => _selectDate(context, dateDebutController),
               ),
-              SizedBox(
-                width: 400,
-                child: TextField(
-                  controller: dateFinController,
-                  decoration: const InputDecoration(labelText: 'Date de fin'),
-                ),
+              TextFormField(
+                controller: dateFinController,
+                decoration: const InputDecoration(labelText: 'Date de fin'),
+                onTap: () => _selectDate(context, dateFinController),
               ),
-              SizedBox(
-                width: 400,
-                child: TextField(
-                  controller: descriptionController,
-                  decoration:
-                      const InputDecoration(labelText: 'Description'),
-                ),
+              TextFormField(
+                controller: descriptionController,
+                decoration: const InputDecoration(
+                    labelText: 'Description des tâches :'),
+                maxLines: 3,
               ),
               const SizedBox(height: 20),
               ElevatedButton(
