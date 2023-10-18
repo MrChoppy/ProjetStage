@@ -46,11 +46,11 @@ class _UpdateState extends State<Update> {
         prenomController,
         adresseController,
         telephoneController,
+        remarquesController,
         nomEntrepriseController,
         prenomPersonneContactController,
         nomPersonneContactController,
         posteTelephoniqueController,
-        remarquesController
       );
     });
   }
@@ -174,7 +174,6 @@ class _UpdateState extends State<Update> {
                     'prenom': prenomController.text,
                     'adresse': adresseController.text,
                     'telephone': telephoneController.text,
-                    'remarques':remarquesController.text
                   };
                   await updateEtudiantInfo(uid, newData);
                 } else if (userTypeValue == "Employeur") {
