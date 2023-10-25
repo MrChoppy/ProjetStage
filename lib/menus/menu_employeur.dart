@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:projetdev/authentication.dart';
-import 'package:projetdev/pages/creationStage.dart';
-import 'package:projetdev/pages/stagesEmployeur.dart';
+import 'package:projetdev/pages/creation_stage.dart';
+import 'package:projetdev/pages/stages_employeur.dart';
 import 'package:projetdev/pages/update.dart';
 
 class MenuEmployeur extends StatefulWidget {

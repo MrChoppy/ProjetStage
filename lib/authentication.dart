@@ -84,7 +84,7 @@ Future<String> getUserPerms(String uid) async {
 
 Future<void> updateUserTextFields(
   String userType,
-  TextEditingController nomController,  
+  TextEditingController nomController,
   TextEditingController prenomController,
   TextEditingController adresseController,
   TextEditingController telephoneController,
@@ -110,7 +110,6 @@ Future<void> updateUserTextFields(
       prenomController.text = etudiantData['prenom'] ?? '';
       adresseController.text = etudiantData['adresse'] ?? '';
       telephoneController.text = etudiantData['telephone'] ?? '';
-      
     }
   } else if (userType == 'Employeur') {
     // Get le snapshot de l'employeur
@@ -134,6 +133,17 @@ Future<void> updateUserTextFields(
           employeurData['posteTelephonique'] ?? '';
     }
   }
+}
+
+Future<DocumentSnapshot> getUserData() async {
+  // Get the current user ID
+  String userId = getUserId();
+
+  // Fetch user data from Firestore
+  DocumentSnapshot userSnapshot =
+      await FirebaseFirestore.instance.collection('users').doc(userId).get();
+
+  return userSnapshot;
 }
 
 //
@@ -386,6 +396,7 @@ Future<void> addStage(
           'dateDebut': dateDebut,
           'dateFin': dateFin,
           'description': description,
+          'statut': true
         });
       } else {
         print('Vous n\'avez pas l\'autorisation d\'ajouter des stages.');
@@ -407,14 +418,15 @@ Future<QuerySnapshot> vueStagesEmployeur(String uid) async {
   }
 }
 
-
-
 //STAGES
 
 //Get stage sur lequel on click
 Future<DocumentSnapshot> getStageInfo(String stageId) async {
   try {
-    return await FirebaseFirestore.instance.collection('stages').doc(stageId).get();
+    return await FirebaseFirestore.instance
+        .collection('stages')
+        .doc(stageId)
+        .get();
   } catch (e) {
     print('Error fetching stage info: $e');
     throw Exception('Error fetching stage info: $e');
@@ -422,9 +434,13 @@ Future<DocumentSnapshot> getStageInfo(String stageId) async {
 }
 
 //Get les donnees de la page et call updateStageInfo()
-Future<void> updateStage(String stageId, String posteController, 
-    String compagnieController, String adresseController,
-    String dateDebutController, String dateFinController,
+Future<void> updateStage(
+    String stageId,
+    String posteController,
+    String compagnieController,
+    String adresseController,
+    String dateDebutController,
+    String dateFinController,
     String descriptionController) async {
   try {
     Map<String, dynamic> newData = {
@@ -437,17 +453,19 @@ Future<void> updateStage(String stageId, String posteController,
     };
 
     await updateStageInfo(stageId, newData);
-    
   } catch (e) {
     print('Error updating stage: $e');
-
   }
 }
 
 //Update les donnees
-Future<void> updateStageInfo(String stageId, Map<String, dynamic> newData) async {
+Future<void> updateStageInfo(
+    String stageId, Map<String, dynamic> newData) async {
   try {
-    await FirebaseFirestore.instance.collection('stages').doc(stageId).update(newData);
+    await FirebaseFirestore.instance
+        .collection('stages')
+        .doc(stageId)
+        .update(newData);
   } catch (e) {
     print('Error updating stage info: $e');
     throw Exception('Error updating stage info: $e');

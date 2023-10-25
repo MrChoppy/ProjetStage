@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'modifierStage.dart';
+import 'modifier_stage.dart';
 import '/authentication.dart';
 
 class StagesEmployeur extends StatefulWidget {
@@ -65,19 +65,20 @@ class _StagesEmployeurState extends State<StagesEmployeur> {
                                 fontSize: 16,
                               ),
                             ),
-                            onTap: () {Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ModifierStage(stage: stage),
-                              ),
-                            );
-                          },
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      ModifierStage(stage: stage),
+                                ),
+                              );
+                            },
                           ),
                           const Divider(
                             color: Colors.grey,
                             thickness: 1.0,
                           ),
-                          
                         ],
                       );
                     },
@@ -100,6 +101,3 @@ class _StagesEmployeurState extends State<StagesEmployeur> {
     }
   }
 }
-
-
-

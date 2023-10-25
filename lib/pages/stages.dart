@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '/authentication.dart';
+import 'stage_details.dart';
 
 class Stages extends StatefulWidget {
   const Stages({super.key});
@@ -54,7 +55,7 @@ class _StagesState extends State<Stages> {
                         } else if (employeurSnapshot.hasError) {
                           return Text('Erreur : ${employeurSnapshot.error}');
                         } else {
-                          final employeurData = employeurSnapshot.data;
+                          final employeurData = employeurSnapshot.data ?? {};
 
                           return Column(
                             children: [
@@ -72,18 +73,29 @@ class _StagesState extends State<Stages> {
                                     fontSize: 16,
                                   ),
                                 ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => StageDetails(
+                                        stageData: data,
+                                        employerData: employeurData,
+                                      ),
+                                    ),
+                                  );
+                                },
                                 trailing: Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Text(
-                                      'Email: ${employeurData?['email']}',
+                                      'Email: ${employeurData['email']}',
                                       style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     Text(
-                                      'Phone: ${employeurData?['telephone']}',
+                                      'Phone: ${employeurData['telephone']}',
                                       style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,

@@ -1,24 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '/authentication.dart';
+import '../authentication.dart';
 import 'package:intl/intl.dart';
 
-class CreationStage extends StatefulWidget {
-  const CreationStage({super.key});
+class ModifierStage extends StatefulWidget {
+  final DocumentSnapshot stage;
+
+  const ModifierStage({required this.stage, Key? key}) : super(key: key);
 
   @override
-  _CreationStageState createState() => _CreationStageState();
+  _ModifierStageState createState() => _ModifierStageState();
 }
 
-class _CreationStageState extends State<CreationStage> {
-  final TextEditingController posteController = TextEditingController();
-  final TextEditingController compagnieController = TextEditingController();
-  final TextEditingController adresseController = TextEditingController();
-  final TextEditingController dateDebutController = TextEditingController();
-  final TextEditingController dateFinController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
+class _ModifierStageState extends State<ModifierStage> {
+  late TextEditingController posteController;
+  late TextEditingController compagnieController;
+  late TextEditingController adresseController;
+  late TextEditingController dateDebutController;
+  late TextEditingController dateFinController;
+  late TextEditingController descriptionController;
+  String successMessage = '';
 
   late DateTime selectedDate;
-  String successMessage = '';
+
   Future<void> _selectDate(
     BuildContext context,
     TextEditingController dateController,
@@ -40,14 +44,38 @@ class _CreationStageState extends State<CreationStage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    final data = widget.stage.data() as Map<String, dynamic>;
+
+    posteController = TextEditingController(text: data['poste'] ?? '');
+    compagnieController = TextEditingController(text: data['compagnie'] ?? '');
+    adresseController = TextEditingController(text: data['adresse'] ?? '');
+    dateDebutController = TextEditingController(text: data['dateDebut'] ?? '');
+    dateFinController = TextEditingController(text: data['dateFin'] ?? '');
+    descriptionController =
+        TextEditingController(text: data['description'] ?? '');
+  }
+
+  @override
+  void dispose() {
+    posteController.dispose();
+    compagnieController.dispose();
+    adresseController.dispose();
+    dateDebutController.dispose();
+    dateFinController.dispose();
+    descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text('Ajouter un Stage'),
+        title: const Text('Modifier le stage'),
       ),
       body: Center(
-        child: Container(
+        child: SizedBox(
           width: 400.0,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,23 +109,23 @@ class _CreationStageState extends State<CreationStage> {
                     labelText: 'Description des tâches :'),
                 maxLines: 3,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  String poste = posteController.text;
-                  String compagnie = compagnieController.text;
-                  String adresse = adresseController.text;
-                  String description = descriptionController.text;
-                  String dateDebut = dateDebutController.text;
-                  String dateFin = dateFinController.text;
-
-                  addStage(context, poste, compagnie, adresse, dateDebut,
-                      dateFin, description);
+                  updateStage(
+                    widget.stage.id,
+                    posteController.text,
+                    compagnieController.text,
+                    adresseController.text,
+                    dateDebutController.text,
+                    dateFinController.text,
+                    descriptionController.text,
+                  );
                   setState(() {
-                    successMessage = 'Stage ajouté!';
+                    successMessage = 'Update réussi!';
                   });
                 },
-                child: const Text('Ajouter le Stage'),
+                child: const Text('Enregistrer les modifications'),
               ),
               Text(
                 successMessage,
