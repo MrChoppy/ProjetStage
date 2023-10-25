@@ -46,6 +46,11 @@ class _SignupState extends State<Signup> {
     return phoneRegex.hasMatch(phoneNumber);
   }
 
+   bool isPasswordValid(String password) {
+    final passwordRegEx = RegExp(r'^.{6,}$');
+    return passwordRegEx.hasMatch(password);
+  }
+
   @override
   Widget build(BuildContext context) {
     final emailFocusNode = FocusNode();
@@ -201,6 +206,7 @@ class _SignupState extends State<Signup> {
               onPressed: () {
                 final String email = emailController.text;
                 final String phoneNumber = telephoneController.text;
+                final String password = passwordController.text;
 
                 if (selectedUserType == 'Employeur' &&
                     nomEntrepriseController.text.isEmpty) {
@@ -258,6 +264,11 @@ class _SignupState extends State<Signup> {
                   } else if (passwordController.text.isEmpty) {
                   setState(() {
                     errorText = "Le champ 'Mot de passe' est requis.";
+                  });
+                  } else if (!isPasswordValid(password)) {
+                  setState(() {
+                    errorText =
+                        "Le mot de passe doit contenir au moins 6 caractères.";
                   });
                 }
                  else {
