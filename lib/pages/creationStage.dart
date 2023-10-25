@@ -18,7 +18,7 @@ class _CreationStageState extends State<CreationStage> {
   final TextEditingController descriptionController = TextEditingController();
 
   late DateTime selectedDate;
-  String successMessage = '';
+  String message = '';
   Future<void> _selectDate(
     BuildContext context,
     TextEditingController dateController,
@@ -38,6 +38,7 @@ class _CreationStageState extends State<CreationStage> {
     });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,20 +91,35 @@ class _CreationStageState extends State<CreationStage> {
                   String dateDebut = dateDebutController.text;
                   String dateFin = dateFinController.text;
 
+                  if (poste.isEmpty ||
+                      compagnie.isEmpty ||
+                      adresse.isEmpty ||
+                      description.isEmpty ||
+                      dateDebut.isEmpty ||
+                      dateFin.isEmpty) {
+                    setState(() {
+                      message = 'Veuillez remplir tous les champs.';
+                      
+                    });
+                  } else {
                   addStage(context, poste, compagnie, adresse, dateDebut,
                       dateFin, description);
                   setState(() {
-                    successMessage = 'Stage ajouté!';
+                    message = 'Stage ajouté!';
                   });
+                  }
                 },
                 child: const Text('Ajouter le Stage'),
               ),
-              Text(
-                successMessage,
-                style: const TextStyle(
-                  color: Colors.green,
+              Container(
+                child: Text(
+                  message,
+                  style: TextStyle(
+                    color: message == 'Stage ajouté!' ? Colors.green : Colors.red,
+                  ),
                 ),
-              ),
+              )
+
             ],
           ),
         ),
