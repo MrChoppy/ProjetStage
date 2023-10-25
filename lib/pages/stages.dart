@@ -11,35 +11,85 @@
     }
 
     class _StagesState extends State<Stages> {
-      final TextEditingController _applicationMessageController =
-          TextEditingController();
-
       void _showApplyDialog(
-          Map<String, dynamic> stageData, Map<String, dynamic> employeurData) {
+           stageId, stageData,  employeurData) {
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Détails du stage'),
+              title: const Text('Détails du stage'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                      "Nom de l'entreprise : ${employeurData?['nomEntreprise'] ?? ''}"),
-                  Text(
-                      "Prénom personne contact : ${employeurData?['prenomPersonneContact'] ?? ''}"),
-                  Text(
-                      "Nom personne contact : ${employeurData?['nomPersonneContact'] ?? ''}"),
-                  Text("Adresse : ${employeurData?['adresse'] ?? ''}"),
-                  Text("Téléphone : ${employeurData?['telephone'] ?? ''}"),
-                  Text(
-                      "Poste téléphonique : ${employeurData?['posteTelephonique'] ?? ''}"),
-                  Text('Poste : ${stageData['poste'] ?? ''}'),
-                  Text('Description : ${stageData['description'] ?? ''}'),
-                  Text('Email de l\'employeur : ${employeurData?['email'] ?? ''}'),
-                  Text(
-                      'Téléphone de l\'employeur : ${employeurData?['telephone'] ?? ''}'),
+                      const Text(
+              'Poste:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              stageData['poste'] ?? '',
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Description:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Container(
+              constraints: const BoxConstraints(
+                maxWidth: 700, 
+              ),
+              child: Text(
+                stageData['description'] ?? '',
+                style: const TextStyle(fontSize: 16),
+                textAlign: TextAlign.justify,
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Adresse:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              stageData['adresse'] ?? '',
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Date du début:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              stageData['dateDebut'] ?? '',
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Date de la fin:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              stageData['dateFin'] ?? '',
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Employeur Email:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              employeurData['email'] ?? '',
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Employeur Phone:',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              employeurData['telephone'] ?? '',
+              style: const TextStyle(fontSize: 16),
+            ),
                 ],
               ),
               actions: [
@@ -48,22 +98,20 @@
                     User? user = getCurrentUser();
                     if (user != null) {
                       String userId = user.uid;
-
-                      String stageId = stageData['idStage'];
                       await FirebaseFirestore.instance
                           .collection('candidatures')
                           .add({
                         'etudiantId': userId, 
-                        'stageId': stageId, 
+                        'stageId':stageId,
                         'statut': 'En attente', 
                       });
-
-                      Navigator.of(context).pop();
+                      if (!context.mounted) return;
+                        Navigator.of(context).pop();
                     } else {
                       print('**********');
                     }
                   },
-                  child: Text('POSTULER'),
+                  child: const Text('POSTULER'),
                 ),
               ],
             );
@@ -81,18 +129,18 @@
           body: FutureBuilder<QuerySnapshot>(
             future: vueStages(),
             builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              } else if (snapshot.hasError) {
-                return Text('Erreur : ${snapshot.error}');
-              } else {
-                final stages = snapshot.data!.docs;
+            if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Erreur : ${snapshot.error}');
+                } else {
+                  final stages = snapshot.data!.docs;
 
-                if (stages.isEmpty) {
-                  return const Center(
-                    child: Text('Aucun stage disponible pour le moment.'),
-                  );
-                }
+                  if (stages.isEmpty) {
+                    return const Center(
+                      child: Text('Aucun stage disponible pour le moment.'),
+                    );
+                  }
 
                 return Center(
                   child: SizedBox(
@@ -103,8 +151,9 @@
                       itemBuilder: (context, index) {
                         final stage = stages[index];
                         final data = stage.data() as Map<String, dynamic>;
-
+                        String stageId = stage.id;
                         return FutureBuilder<Map<String, dynamic>>(
+                          
                           future: getEmployeurInfo(data['employeurId']),
                           builder: (BuildContext context,
                               AsyncSnapshot<Map<String, dynamic>>
@@ -154,14 +203,14 @@
                                     ),
                                     onTap: () {
                                       if (employeurData != null) {
-                                        _showApplyDialog(data, employeurData);
+                                        _showApplyDialog(stageId, stage, employeurData);
                                       } else {
                                         showDialog(
                                           context: context,
                                           builder: (BuildContext context) {
                                             return AlertDialog(
-                                              title: Text('Erreur'),
-                                              content: Text(
+                                              title: const Text('Erreur'),
+                                              content: const Text(
                                                   'Les informations de l\'employeur ne sont plus disponibles.'),
                                               actions: [
                                                 ElevatedButton(
@@ -169,7 +218,7 @@
                                                     Navigator.of(context)
                                                         .pop(); // Ferme le popup d'erreur.
                                                   },
-                                                  child: Text('OK'),
+                                                  child: const Text('OK'),
                                                 ),
                                               ],
                                             );

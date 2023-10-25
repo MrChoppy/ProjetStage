@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:projetdev/menus/menu_employeur.dart';
 import 'package:projetdev/menus/menu_etudiant.dart';
 import 'package:projetdev/pages/login.dart';
-import 'package:projetdev/pages/stages.dart';
 
 //
 //
@@ -263,6 +262,8 @@ Future<QuerySnapshot> vueStages() async {
   }
 }
 
+
+
 Future<Map<String, dynamic>> getEmployeurInfo(String employeurId) async {
   try {
     DocumentSnapshot employeurSnapshot = await FirebaseFirestore.instance
@@ -379,18 +380,11 @@ Future<void> addStage(
     if (user != null) {
       String userId = user.uid;
 
+      // Vérifie si l'utilisateur est un "employeur"
       String userPerms = await getUserPerms(userId);
       if (userPerms == "Employeur") {
-        QuerySnapshot stageSnapshot = await FirebaseFirestore.instance
-            .collection('stages')
-            .get();
-
-        int stageCount = stageSnapshot.docs.length;
-
-        String stageId = (stageCount + 1).toString();
-
-        await FirebaseFirestore.instance.collection('stages').doc(stageId).set({
-          'idStage': stageId,
+        // Ajoute le stage à la base de données dans la collection "stages"
+        await FirebaseFirestore.instance.collection('stages').add({
           'employeurId': userId,
           'poste': poste,
           'compagnie': compagnie,
@@ -398,24 +392,62 @@ Future<void> addStage(
           'dateDebut': dateDebut,
           'dateFin': dateFin,
           'description': description,
+          'statut': true
         });
       } else {
         print('Vous n\'avez pas l\'autorisation d\'ajouter des stages.');
       }
     }
   } catch (e) {
-    print('Erreur lors de l\'ajout du stage : $e');
+    print('Erreur lors de lajout du stage : $e');
+  }
+}
+
+Stream<QuerySnapshot> vueStagesEmployeur(String uid)  {
+  try {
+    return FirebaseFirestore.instance
+        .collection('stages')
+        .where('employeurId', isEqualTo: uid)
+        .snapshots();
+  } catch (e) {
+    throw Exception('Error get stages: $e');
   }
 }
 
 
-Future<QuerySnapshot> vueStagesEmployeur(String uid) async {
+Future<void> updateStageInfo(
+    String stageId, Map<String, dynamic> newData) async {
   try {
-    return await FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('stages')
-        .where('employeurId', isEqualTo: uid)
-        .get();
+        .doc(stageId)
+        .update(newData);
   } catch (e) {
-    throw Exception('Error get stages: $e');
+    print('Error updating stage info: $e');
+    throw Exception('Error updating stage info: $e');
+  }
+}
+
+Future<void> updateStage(
+    String stageId,
+    String posteController,
+    String compagnieController,
+    String adresseController,
+    String dateDebutController,
+    String dateFinController,
+    String descriptionController) async {
+  try {
+    Map<String, dynamic> newData = {
+      'poste': posteController,
+      'compagnie': compagnieController,
+      'adresse': adresseController,
+      'dateDebut': dateDebutController,
+      'dateFin': dateFinController,
+      'description': descriptionController,
+    };
+
+    await updateStageInfo(stageId, newData);
+  } catch (e) {
+    print('Error updating stage: $e');
   }
 }
