@@ -24,6 +24,12 @@ class _StagesState extends State<Stages> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text("Nom de l'entreprise : ${employeurData?['nomEntreprise'] ?? ''}"),
+              Text("Prénom personne contact : ${employeurData?['prenomPersonneContact'] ?? ''}"),
+              Text("Nom personne contact : ${employeurData?['nomPersonneContact'] ?? ''}"),
+              Text("Adresse : ${employeurData?['adresse'] ?? ''}"),
+              Text("Téléphone : ${employeurData?['telephone'] ?? ''}"),
+              Text("Poste téléphonique : ${employeurData?['posteTelephonique'] ?? ''}"),
               Text('Poste : ${stageData['poste'] ?? ''}'),
               Text('Description : ${stageData['description'] ?? ''}'),
               Text('Email de l\'employeur : ${employeurData?['email'] ?? ''}'),
