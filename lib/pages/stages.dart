@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '/authentication.dart';
@@ -24,12 +25,16 @@ class _StagesState extends State<Stages> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Nom de l'entreprise : ${employeurData?['nomEntreprise'] ?? ''}"),
-              Text("Prénom personne contact : ${employeurData?['prenomPersonneContact'] ?? ''}"),
-              Text("Nom personne contact : ${employeurData?['nomPersonneContact'] ?? ''}"),
+              Text(
+                  "Nom de l'entreprise : ${employeurData?['nomEntreprise'] ?? ''}"),
+              Text(
+                  "Prénom personne contact : ${employeurData?['prenomPersonneContact'] ?? ''}"),
+              Text(
+                  "Nom personne contact : ${employeurData?['nomPersonneContact'] ?? ''}"),
               Text("Adresse : ${employeurData?['adresse'] ?? ''}"),
               Text("Téléphone : ${employeurData?['telephone'] ?? ''}"),
-              Text("Poste téléphonique : ${employeurData?['posteTelephonique'] ?? ''}"),
+              Text(
+                  "Poste téléphonique : ${employeurData?['posteTelephonique'] ?? ''}"),
               Text('Poste : ${stageData['poste'] ?? ''}'),
               Text('Description : ${stageData['description'] ?? ''}'),
               Text('Email de l\'employeur : ${employeurData?['email'] ?? ''}'),
@@ -39,10 +44,24 @@ class _StagesState extends State<Stages> {
           ),
           actions: [
             ElevatedButton(
-              onPressed: () {
-                // Ajoutez ici la logique pour envoyer la candidature.
-                // Une fois la candidature envoyée, fermez le popup.
-                Navigator.of(context).pop();
+              onPressed: () async {
+                User? user = getCurrentUser();
+                if (user != null) {
+                  String userId = user.uid;
+
+                  String stageId = stageData['idStage'];
+                  await FirebaseFirestore.instance
+                      .collection('candidatures')
+                      .add({
+                    'etudiantId': userId, 
+                    'stageId': stageId, 
+                    'statut': 'En attente', 
+                  });
+
+                  Navigator.of(context).pop();
+                } else {
+                  print('**********');
+                }
               },
               child: Text('POSTULER'),
             ),

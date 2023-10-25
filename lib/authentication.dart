@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:projetdev/menus/menu_employeur.dart';
 import 'package:projetdev/menus/menu_etudiant.dart';
 import 'package:projetdev/pages/login.dart';
+import 'package:projetdev/pages/stages.dart';
 
 //
 //
@@ -378,11 +379,18 @@ Future<void> addStage(
     if (user != null) {
       String userId = user.uid;
 
-      // Vérifie si l'utilisateur est un "employeur"
       String userPerms = await getUserPerms(userId);
       if (userPerms == "Employeur") {
-        // Ajoute le stage à la base de données dans la collection "stages"
-        await FirebaseFirestore.instance.collection('stages').add({
+        QuerySnapshot stageSnapshot = await FirebaseFirestore.instance
+            .collection('stages')
+            .get();
+
+        int stageCount = stageSnapshot.docs.length;
+
+        String stageId = (stageCount + 1).toString();
+
+        await FirebaseFirestore.instance.collection('stages').doc(stageId).set({
+          'idStage': stageId,
           'employeurId': userId,
           'poste': poste,
           'compagnie': compagnie,
@@ -396,9 +404,10 @@ Future<void> addStage(
       }
     }
   } catch (e) {
-    print('Erreur lors de lajout du stage : $e');
+    print('Erreur lors de l\'ajout du stage : $e');
   }
 }
+
 
 Future<QuerySnapshot> vueStagesEmployeur(String uid) async {
   try {
