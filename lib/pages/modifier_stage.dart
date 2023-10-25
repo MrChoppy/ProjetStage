@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../authentication.dart';
-import 'package:intl/intl.dart';
 
 class ModifierStage extends StatefulWidget {
   final DocumentSnapshot stage;
@@ -20,28 +19,7 @@ class _ModifierStageState extends State<ModifierStage> {
   late TextEditingController dateFinController;
   late TextEditingController descriptionController;
   String successMessage = '';
-
-  late DateTime selectedDate;
-
-  Future<void> _selectDate(
-    BuildContext context,
-    TextEditingController dateController,
-  ) async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2023),
-      lastDate: DateTime(2030),
-    );
-
-    if (pickedDate != null) {
-      setState(() {
-        selectedDate = pickedDate;
-        String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
-        dateController.text = formattedDate;
-      });
-    }
-  }
+  bool statut = true;
 
   @override
   void initState() {
@@ -55,6 +33,7 @@ class _ModifierStageState extends State<ModifierStage> {
     dateFinController = TextEditingController(text: data['dateFin'] ?? '');
     descriptionController =
         TextEditingController(text: data['description'] ?? '');
+    statut = data['statut'];
   }
 
   @override
@@ -65,6 +44,7 @@ class _ModifierStageState extends State<ModifierStage> {
     dateDebutController.dispose();
     dateFinController.dispose();
     descriptionController.dispose();
+
     super.dispose();
   }
 
@@ -73,41 +53,78 @@ class _ModifierStageState extends State<ModifierStage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Modifier le stage'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            navigateToVueEmployeur(context);
+          },
+        ),
       ),
       body: Center(
-        child: SizedBox(
-          width: 400.0,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              TextFormField(
-                controller: posteController,
-                decoration:
-                    const InputDecoration(labelText: 'Poste du stagiaire : '),
+            children: [
+              SizedBox(
+                width: 400,
+                child: TextField(
+                  controller: posteController,
+                  decoration: const InputDecoration(labelText: 'Poste'),
+                ),
               ),
-              TextFormField(
-                controller: compagnieController,
-                decoration: const InputDecoration(labelText: 'Compagnie : '),
+              SizedBox(
+                width: 400,
+                child: TextField(
+                  controller: compagnieController,
+                  decoration: const InputDecoration(labelText: 'Compagnie'),
+                ),
               ),
-              TextFormField(
-                controller: adresseController,
-                decoration: const InputDecoration(labelText: 'Adresse : '),
+              SizedBox(
+                width: 400,
+                child: TextField(
+                  controller: adresseController,
+                  decoration: const InputDecoration(labelText: 'Adresse'),
+                ),
               ),
-              TextFormField(
-                controller: dateDebutController,
-                decoration: const InputDecoration(labelText: 'Date du debut'),
-                onTap: () => _selectDate(context, dateDebutController),
+              SizedBox(
+                width: 400,
+                child: TextField(
+                  controller: dateDebutController,
+                  decoration: const InputDecoration(labelText: 'Date de début'),
+                ),
               ),
-              TextFormField(
-                controller: dateFinController,
-                decoration: const InputDecoration(labelText: 'Date de fin'),
-                onTap: () => _selectDate(context, dateFinController),
+              SizedBox(
+                width: 400,
+                child: TextField(
+                  controller: dateFinController,
+                  decoration: const InputDecoration(labelText: 'Date de fin'),
+                ),
               ),
-              TextFormField(
-                controller: descriptionController,
-                decoration: const InputDecoration(
-                    labelText: 'Description des tâches :'),
-                maxLines: 3,
+              SizedBox(
+                width: 400,
+                child: TextField(
+                  controller: descriptionController,
+                  decoration: const InputDecoration(labelText: 'Description'),
+                ),
+              ),
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Statut'),
+                    const SizedBox(
+                        width: 20), // Add some space between text and switch
+                    Switch(
+                      value: statut,
+                      activeColor: const Color.fromARGB(255, 65, 0, 125),
+                      onChanged: (bool value) {
+                        setState(() {
+                          statut = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
