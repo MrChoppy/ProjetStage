@@ -427,7 +427,15 @@ Future<void> updateStageInfo(
     throw Exception('Error updating stage info: $e');
   }
 }
+Future<bool> hasStudentApplied(String studentId, String stageId) async {
+  QuerySnapshot query = await FirebaseFirestore.instance
+      .collection('candidatures')
+      .where('etudiantId', isEqualTo: studentId)
+      .where('stageId', isEqualTo: stageId)
+      .get();
 
+  return query.docs.isNotEmpty;
+}
 Future<void> updateStage(
     String stageId,
     String posteController,
