@@ -23,7 +23,6 @@ class _MenuEmployeurState extends State<MenuEmployeur> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         title: const Text('Connecté en tant qu\'employeur'),
         actions: [
           IconButton(
@@ -34,29 +33,43 @@ class _MenuEmployeurState extends State<MenuEmployeur> {
           ),
         ],
       ),
-      body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Liste de vos stages',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_box),
-            label: 'Ajouter un stage',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Modifier profil',
-          )
-        ],
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            ListTile(
+              leading: Icon(Icons.list),
+              title: Text('Liste de vos stages'),
+              onTap: () {
+                setState(() {
+                  _currentIndex = 0;
+                });
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.add_box),
+              title: Text('Ajouter un stage'),
+              onTap: () {
+                setState(() {
+                  _currentIndex = 1;
+                });
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text('Modifier profil'),
+              onTap: () {
+                setState(() {
+                  _currentIndex = 2;
+                });
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
       ),
+      body: _pages[_currentIndex],
     );
   }
 }
