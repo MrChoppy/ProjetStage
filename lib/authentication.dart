@@ -459,3 +459,25 @@ Future<void> updateStage(
     print('Error updating stage: $e');
   }
 }
+Future<void> deleteStage(String stageId) async {
+  try { 
+    await deleteStageInfo(stageId);
+  } catch (e) {
+    print('Error deleting stage: $e');
+  }
+}
+
+Future<void> deleteStageInfo(String stageId) async {
+  try {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    final CollectionReference stagesCollection = firestore.collection('stages');
+    final DocumentReference stageDocument = stagesCollection.doc(stageId);
+
+    await stageDocument.delete();
+
+    print('Stage with ID $stageId has been successfully deleted.');
+  } catch (e) {
+    print('Error deleting stage: $e');
+  }
+}

@@ -113,6 +113,20 @@ class _StagesEmployeurState extends State<StagesEmployeur> {
                   },
                   child: const Text('Enregistrer les modifications'),
                 ),
+                
+                ElevatedButton(onPressed: (){
+                  deleteStage(stageData.id);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      
+                      const SnackBar(
+                        content: Text('Vous avez supprimé le stage avec succès!'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                    Navigator.of(context).pop();
+
+                }, child: const Text( 'Supprimer le stage'),
+                ),
               ]),
         );
       },
