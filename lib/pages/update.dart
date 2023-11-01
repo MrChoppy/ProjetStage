@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '/authentication.dart';
+import '/validateurs.dart';
 
 class Update extends StatefulWidget {
   const Update({Key? key}) : super(key: key);
@@ -27,6 +28,7 @@ class _UpdateState extends State<Update> {
   late Future<String> userType;
   String? userTypeValue;
   String successMessage = '';
+  String errorMessage = '';
 
   @override
   void initState() {
@@ -57,6 +59,9 @@ class _UpdateState extends State<Update> {
 
   @override
   Widget build(BuildContext context) {
+
+    final String phoneNumber = telephoneController.text;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -136,7 +141,7 @@ class _UpdateState extends State<Update> {
             ),
             SizedBox(
               width: 400,
-              child: TextField(
+              child: TextFormField(
                 controller: telephoneController,
                 decoration:
                     const InputDecoration(labelText: 'Numéro de téléphone'),
@@ -176,7 +181,14 @@ class _UpdateState extends State<Update> {
                     'telephone': telephoneController.text,
                     'remarques': remarquesController.text
                   };
-                  await updateEtudiantInfo(uid, newData);
+                  if (isPhoneValid(telephoneController.text)) {
+                    await updateEtudiantInfo(uid, newData);
+                  } else if (!isPhoneValid(telephoneController.text)){
+                    setState(() {
+                      errorMessage = "Numéro de téléphone non valide. Doit avoir la syntaxe suivante : 123-456-7890";
+                     });
+                  } 
+                  
                 } else if (userTypeValue == "Employeur") {
                   String uid = getUserId();
                   Map<String, dynamic> newData = {
@@ -188,12 +200,22 @@ class _UpdateState extends State<Update> {
                     'telephone': telephoneController.text,
                     'posteTelephonique': posteTelephoniqueController.text,
                   };
-                  await updateEmployeurInfo(uid, newData);
+                  if (isPhoneValid(telephoneController.text)) {
+                    await updateEmployeurInfo(uid, newData);
+                  } else if (!isPhoneValid(telephoneController.text)) {
+                     setState(() {
+                      errorMessage = "Numéro de téléphone non valide. Doit avoir la syntaxe suivante : 123-456-7890";
+                     });
+                  }
+                  
                 }
                 // success message
+                if (isPhoneValid(telephoneController.text)) { 
                 setState(() {
                   successMessage = 'Update reussi!';
+                  errorMessage = "";
                 });
+                } 
               },
               child: const Text("Update"),
             ),
@@ -203,6 +225,12 @@ class _UpdateState extends State<Update> {
               successMessage,
               style: const TextStyle(
                 color: Colors.green,
+              ),
+            ),
+            Text(
+              errorMessage,
+              style: const TextStyle(
+                color: Colors.red,
               ),
             ),
           ],
