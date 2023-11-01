@@ -75,7 +75,8 @@ class _StagesState extends State<Stages> {
                           actions: [
                             ElevatedButton(
                               onPressed: () {
-                                Navigator.of(context).pop();
+                                Navigator.of(context)
+                                    .pop(); // Fermer la popup d'erreur
                               },
                               child: const Text('OK'),
                             ),
@@ -91,8 +92,29 @@ class _StagesState extends State<Stages> {
                       'stageId': stageId,
                       'statut': 'En attente',
                     });
-                    if (!context.mounted) return;
+
+                    // Fermer la popup actuelle (celle contenant le bouton "POSTULER")
                     Navigator.of(context).pop();
+
+                    // Popup de confirmation
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Succès'),
+                            content: const Text(
+                                'Votre candidature a été enregistrée avec succès.'),
+                            actions: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pop(); // Fermer la popup de confirmation
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        });
                   }
                 },
                 child: const Text('POSTULER'),
