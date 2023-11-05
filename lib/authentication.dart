@@ -519,13 +519,47 @@ Future<void> updateStage(
   }
 }
 Future<void> deleteStage(String stageId) async {
-  try { 
+  try {
+    // Supprime d'abord toutes les candidatures associées au stage
+    await deleteCandidaturesForStage(stageId);
+
+    // Ensuite, supprime le stage lui-même
     await deleteStageInfo(stageId);
   } catch (e) {
     print('Error deleting stage: $e');
   }
 }
 
+Future<void> deleteCandidaturesForStage(String stageId) async {
+  try {
+    final QuerySnapshot<Object?> candidaturesQuery = await FirebaseFirestore.instance
+        .collection('candidatures')
+        .where('stageId', isEqualTo: stageId)
+        .get();
+
+    for (QueryDocumentSnapshot<Object?> doc in candidaturesQuery.docs) {
+      final String candidatureId = doc.id;
+      await deleteCandidatureInfo(candidatureId);
+    }
+  } catch (e) {
+    print('Error deleting candidatures for stage: $e');
+  }
+}
+
+Future<void> deleteCandidatureInfo(String candidatureId) async {
+  try {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    final CollectionReference candidaturesCollection = firestore.collection('candidatures');
+    final DocumentReference candidatureDocument = candidaturesCollection.doc(candidatureId);
+
+    await candidatureDocument.delete();
+
+    print('Candidature with ID $candidatureId has been successfully deleted.');
+  } catch (e) {
+    print('Error deleting candidature: $e');
+  }
+}
 Future<void> deleteStageInfo(String stageId) async {
   try {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
