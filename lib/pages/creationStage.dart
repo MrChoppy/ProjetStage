@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '/authentication.dart';
 import 'package:intl/intl.dart';
+import '../menus/menu_employeur.dart';
+
 
 class CreationStage extends StatefulWidget {
   const CreationStage({super.key});
@@ -31,11 +33,11 @@ class _CreationStageState extends State<CreationStage> {
     );
 
     if (pickedDate != null) {
-    setState(() {
-      selectedDate = pickedDate;
-      String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
-      dateController.text = formattedDate;
-    });
+      setState(() {
+        selectedDate = pickedDate;
+        String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+        dateController.text = formattedDate;
+      });
     }
   }
 
@@ -99,27 +101,23 @@ class _CreationStageState extends State<CreationStage> {
                       dateFin.isEmpty) {
                     setState(() {
                       message = 'Veuillez remplir tous les champs.';
-                      
                     });
                   } else {
-                  addStage(context, poste, compagnie, adresse, dateDebut,
-                      dateFin, description);
-                  setState(() {
-                    message = 'Stage ajouté!';
-                  });
+                    addStage(context, poste, compagnie, adresse, dateDebut,
+                        dateFin, description);
+                    setState(() {
+                      message = 'Stage ajouté!';
+                    });
+
+                    // Redirection vers la page MenuEmployeur au lieu de StagesEmployeur
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MenuEmployeur()));
                   }
                 },
                 child: const Text('Ajouter le Stage'),
-              ),
-              Container(
-                child: Text(
-                  message,
-                  style: TextStyle(
-                    color: message == 'Stage ajouté!' ? Colors.green : Colors.red,
-                  ),
-                ),
               )
-
             ],
           ),
         ),
