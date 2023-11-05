@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'signup.dart';
-import '/authentication.dart';
+import 'package:projetdev/authentication.dart';
 
 class Login extends StatefulWidget {
-  const Login({super.key});
+  const Login({Key? key}) : super(key: key);
 
   @override
   _LoginState createState() => _LoginState();
@@ -47,8 +47,16 @@ class _LoginState extends State<Login> {
             ),
             const SizedBox(height: 25),
             ElevatedButton(
-              onPressed: () => signInWithEmailAndPassword(
-                  context, emailController.text, passwordController.text),
+              onPressed: () async {
+                bool signInSuccess = await signInWithEmailAndPassword(
+                    context, emailController.text, passwordController.text);
+
+                if (!signInSuccess) {
+                  setState(() {
+                    errorText = 'Email ou mot de passe invalide. Veuillez réessayer.';
+                  });
+                }
+              },
               child: const Text('Log In'),
             ),
             if (errorText != null)

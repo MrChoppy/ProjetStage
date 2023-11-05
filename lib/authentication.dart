@@ -12,7 +12,7 @@ import 'package:projetdev/pages/login.dart';
 //
 
 // Connecter un utilisateur existant
-Future<void> signInWithEmailAndPassword(
+Future<bool> signInWithEmailAndPassword(
     BuildContext context, String email, String password) async {
   try {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -28,13 +28,17 @@ Future<void> signInWithEmailAndPassword(
       if (context.mounted) {
         navigateBasedOnUserRole(userPerms, context);
       }
+      return true; 
     } else {
       print('User role not recognized.');
+      return false; 
     }
   } catch (e) {
     print('Erreur : $e');
+    return false; 
   }
 }
+
 
 // Déconnecter l'utilisateur
 Future<void> signOut(BuildContext context) async {
