@@ -109,7 +109,6 @@ class _CreationStageState extends State<CreationStage> {
                       message = 'Stage ajouté!';
                     });
 
-                    // Redirection vers la page MenuEmployeur au lieu de StagesEmployeur
                     Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

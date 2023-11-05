@@ -76,7 +76,7 @@ class _StagesState extends State<Stages> {
                             ElevatedButton(
                               onPressed: () {
                                 Navigator.of(context)
-                                    .pop(); // Fermer la popup d'erreur
+                                    .pop();   
                               },
                               child: const Text('OK'),
                             ),
@@ -91,12 +91,11 @@ class _StagesState extends State<Stages> {
                       'etudiantId': userId,
                       'stageId': stageId,
                       'statut': 'En attente',
+                      'dateCandidature': DateTime.now()
                     });
 
-                    // Fermer la popup actuelle (celle contenant le bouton "POSTULER")
                     Navigator.of(context).pop();
 
-                    // Popup de confirmation
                     showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -108,7 +107,7 @@ class _StagesState extends State<Stages> {
                               ElevatedButton(
                                 onPressed: () {
                                   Navigator.of(context)
-                                      .pop(); // Fermer la popup de confirmation
+                                      .pop(); 
                                 },
                                 child: const Text('OK'),
                               ),
