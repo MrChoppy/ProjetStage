@@ -5,7 +5,7 @@ import 'package:projetdev/authentication.dart';
 import 'package:intl/intl.dart';
 
 class Stages extends StatefulWidget {
-  const Stages({Key? key});
+  const Stages({super.key});
 
   @override
   _StagesState createState() => _StagesState();
@@ -17,7 +17,7 @@ class _StagesState extends State<Stages> {
     if (user != null) {
       String userId = user.uid;
       bool hasApplied = await hasStudentApplied(userId, stageId);
-
+      if (!context.mounted) return;
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -74,6 +74,7 @@ class _StagesState extends State<Stages> {
 
                     if (query.docs.isNotEmpty) {
                       String dateCandidature = query.docs[0]['dateCandidature'];
+                      if (!context.mounted) return;
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -95,7 +96,8 @@ class _StagesState extends State<Stages> {
                     }
                   } else {
                     DateTime currentDateTime = DateTime.now();
-                    String currentDate = DateFormat('y/MM/dd HH:mm').format(currentDateTime);
+                    String currentDate =
+                        DateFormat('y/MM/dd HH:mm').format(currentDateTime);
 
                     await FirebaseFirestore.instance
                         .collection('candidatures')
@@ -105,6 +107,7 @@ class _StagesState extends State<Stages> {
                       'statut': 'En attente',
                       'dateCandidature': currentDate,
                     });
+                    if (!context.mounted) return;
 
                     Navigator.of(context).pop();
 

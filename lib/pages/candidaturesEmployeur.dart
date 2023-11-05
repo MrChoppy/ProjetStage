@@ -4,6 +4,8 @@ import 'package:projetdev/authentication.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CandidaturesEmployeur extends StatefulWidget {
+  const CandidaturesEmployeur({super.key});
+
   @override
   _CandidaturesEmployeurState createState() => _CandidaturesEmployeurState();
 }
@@ -47,17 +49,17 @@ class _CandidaturesEmployeurState extends State<CandidaturesEmployeur> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Candidatures Employeur'),
+        automaticallyImplyLeading: false,
+        title: const Text('Candidatures Employeur'),
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, 
-          crossAxisAlignment:
-              CrossAxisAlignment.center, 
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             DropdownButton<String>(
               value: selectedStageId,
-              hint: Text('Sélectionner un stage'),
+              hint: const Text('Sélectionner un stage'),
               onChanged: (String? newStageId) {
                 setState(() {
                   selectedStageId = newStageId;
@@ -71,16 +73,17 @@ class _CandidaturesEmployeurState extends State<CandidaturesEmployeur> {
                   }).toList() ??
                   [],
             ),
-            SizedBox(height: 16), 
+            const SizedBox(height: 16),
             FutureBuilder<QuerySnapshot>(
               future: getCandidaturesForStage(selectedStageId ?? ''),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   return Text('Erreur : ${snapshot.error}');
                 } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Text('Aucune candidature trouvée pour ce stage.');
+                  return const Text(
+                      'Aucune candidature trouvée pour ce stage.');
                 } else {
                   print("Candidatures: ${snapshot.data!.docs.length}");
                   return Expanded(
@@ -99,7 +102,7 @@ class _CandidaturesEmployeurState extends State<CandidaturesEmployeur> {
                             builder: (context, etudiantSnapshot) {
                               if (etudiantSnapshot.connectionState ==
                                   ConnectionState.waiting) {
-                                return CircularProgressIndicator();
+                                return const CircularProgressIndicator();
                               } else if (etudiantSnapshot.hasError) {
                                 return Text(
                                     'Erreur : ${etudiantSnapshot.error}');
@@ -114,7 +117,7 @@ class _CandidaturesEmployeurState extends State<CandidaturesEmployeur> {
                                         children: [
                                           Text(
                                               'Nom de l\'étudiant: ${etudiantInfo['nom'] ?? 'N/A'}'),
-                                          SizedBox(width: 8),
+                                          const SizedBox(width: 8),
                                           Text(
                                               '${etudiantInfo['prenom'] ?? 'N/A'}'),
                                         ],
@@ -133,10 +136,8 @@ class _CandidaturesEmployeurState extends State<CandidaturesEmployeur> {
                                       ),
                                     ),
                                     if (index < snapshot.data!.docs.length - 1)
-                                      Divider(
-                                          thickness: 1,
-                                          color: Colors
-                                              .grey), 
+                                      const Divider(
+                                          thickness: 1, color: Colors.grey),
                                   ],
                                 );
                               }
