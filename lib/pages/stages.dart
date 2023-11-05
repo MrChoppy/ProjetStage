@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '/authentication.dart';
+import 'package:projetdev/authentication.dart';
+import 'package:intl/intl.dart';
 
 class Stages extends StatefulWidget {
-  const Stages({super.key});
+  const Stages({Key? key});
 
   @override
   _StagesState createState() => _StagesState();
@@ -65,18 +66,59 @@ class _StagesState extends State<Stages> {
               ElevatedButton(
                 onPressed: () async {
                   if (hasApplied) {
+                    QuerySnapshot query = await FirebaseFirestore.instance
+                        .collection('candidatures')
+                        .where('etudiantId', isEqualTo: userId)
+                        .where('stageId', isEqualTo: stageId)
+                        .get();
+
+                    if (query.docs.isNotEmpty) {
+                      String dateCandidature = query.docs[0]['dateCandidature'];
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Erreur'),
+                            content: Text(
+                                'Vous avez déjà postulé le $dateCandidature.'),
+                            actions: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  } else {
+                    DateTime currentDateTime = DateTime.now();
+                    String currentDate = DateFormat('y/MM/dd HH:mm').format(currentDateTime);
+
+                    await FirebaseFirestore.instance
+                        .collection('candidatures')
+                        .add({
+                      'etudiantId': userId,
+                      'stageId': stageId,
+                      'statut': 'En attente',
+                      'dateCandidature': currentDate,
+                    });
+
+                    Navigator.of(context).pop();
+
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: const Text('Erreur'),
-                          content:
-                              const Text('Vous avez déjà postulé à ce stage.'),
+                          title: const Text('Succès'),
+                          content: const Text(
+                              'Votre candidature a été enregistrée avec succès.'),
                           actions: [
                             ElevatedButton(
                               onPressed: () {
-                                Navigator.of(context)
-                                    .pop();   
+                                Navigator.of(context).pop();
                               },
                               child: const Text('OK'),
                             ),
@@ -84,36 +126,6 @@ class _StagesState extends State<Stages> {
                         );
                       },
                     );
-                  } else {
-                    await FirebaseFirestore.instance
-                        .collection('candidatures')
-                        .add({
-                      'etudiantId': userId,
-                      'stageId': stageId,
-                      'statut': 'En attente',
-                      'dateCandidature': DateTime.now()
-                    });
-
-                    Navigator.of(context).pop();
-
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Succès'),
-                            content: const Text(
-                                'Votre candidature a été enregistrée avec succès.'),
-                            actions: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context)
-                                      .pop(); 
-                                },
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          );
-                        });
                   }
                 },
                 child: const Text('POSTULER'),
@@ -219,12 +231,11 @@ class _StagesState extends State<Stages> {
                                         return AlertDialog(
                                           title: const Text('Erreur'),
                                           content: const Text(
-                                              'Les informations de l\'employeur ne sont plus disponibles.'),
+                                              "Les informations de l'employeur ne sont plus disponibles."),
                                           actions: [
                                             ElevatedButton(
                                               onPressed: () {
-                                                Navigator.of(context)
-                                                    .pop(); // Ferme le popup d'erreur.
+                                                Navigator.of(context).pop();
                                               },
                                               child: const Text('OK'),
                                             ),

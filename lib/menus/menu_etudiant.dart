@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:projetdev/authentication.dart';
 import 'package:projetdev/pages/stages.dart';
-import 'package:projetdev/pages/update.dart';
+import  'package:projetdev/pages/update.dart';
 
 class MenuEtudiant extends StatefulWidget {
   const MenuEtudiant({super.key});
