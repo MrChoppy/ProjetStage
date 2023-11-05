@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projetdev/authentication.dart';
+import 'package:projetdev/pages/candidaturesEmployeur.dart';
 import 'package:projetdev/pages/creationStage.dart';
 import 'package:projetdev/pages/stagesEmployeur.dart';
 import 'package:projetdev/pages/update.dart';
@@ -17,6 +18,7 @@ class _MenuEmployeurState extends State<MenuEmployeur> {
     const StagesEmployeur(),
     const CreationStage(),
     const Update(),
+    CandidaturesEmployeur(),
   ];
 
   @override
@@ -66,6 +68,16 @@ class _MenuEmployeurState extends State<MenuEmployeur> {
                 Navigator.pop(context);
               },
             ),
+            ListTile(
+              leading: Icon(Icons.supervisor_account),
+              title: Text('Candidatures des étudiants'),
+              onTap: () {
+                setState(() {
+                  _currentIndex = 3; 
+                });
+                Navigator.pop(context);
+              },
+            ),
           ],
         ),
       ),
@@ -73,6 +85,7 @@ class _MenuEmployeurState extends State<MenuEmployeur> {
     );
   }
 }
+
 
 void main() {
   runApp(const MaterialApp(

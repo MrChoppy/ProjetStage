@@ -403,6 +403,61 @@ Future<void> addStage(
   }
 }
 
+Future<void> getStages() async {
+  try {
+    User? user = getCurrentUser();
+    if (user != null) {
+      String userId = user.uid;
+
+      String userPerms = await getUserPerms(userId);
+      if (userPerms == 'Employeur') {
+        QuerySnapshot stagesQuery = await FirebaseFirestore.instance
+            .collection('stages')
+            .where('employeurId', isEqualTo: userId)
+            .get();
+
+        List<String> titles = [];
+        for (QueryDocumentSnapshot doc in stagesQuery.docs) {
+          titles.add(doc['poste'] as String);
+        }
+
+      } else {
+        print('Vous n\'avez pas l\'autorisation de consulter les stages.');
+      }
+    }
+  } catch (e) {
+    print('Erreur lors du chargement des titres des stages : $e');
+  }
+}
+ Future<Map<String, dynamic>> getEtudiantInfo(String etudiantId) async {
+    try {
+      DocumentSnapshot etudiantSnapshot = await FirebaseFirestore.instance
+          .collection('etudiant')
+          .doc(etudiantId)
+          .get();
+
+      if (etudiantSnapshot.exists) {
+        return etudiantSnapshot.data() as Map<String, dynamic>;
+      } else {
+        // Retourner un map vide si l'étudiant n'existe pas
+        return {};
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération des informations de l\'étudiant : $e');
+      return {};
+    }
+  }
+Future<QuerySnapshot<Object?>> getCandidaturesForStage(String stageId) async {
+  try {
+    return await FirebaseFirestore.instance
+        .collection('candidatures')
+        .where('stageId', isEqualTo: stageId)
+        .get();
+  } catch (e) {
+    throw Exception('Erreur lors de la récupération des candidatures : $e');
+  }
+}
+
 Stream<QuerySnapshot> vueStagesEmployeur(String uid)  {
   try {
     return FirebaseFirestore.instance
@@ -410,7 +465,7 @@ Stream<QuerySnapshot> vueStagesEmployeur(String uid)  {
         .where('employeurId', isEqualTo: uid)
         .snapshots();
   } catch (e) {
-    throw Exception('Error get stages: $e');
+    throw Exception('Erreur lors de la recuperation des stages: $e');
   }
 }
 
