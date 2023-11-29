@@ -18,7 +18,7 @@ class _MenuEmployeurState extends State<MenuEmployeur> {
     const StagesEmployeur(),
     const CreationStage(),
     const Update(),
-    const CandidaturesEmployeur(),
+    CandidaturesEmployeur(),
   ];
 
   @override
@@ -39,8 +39,8 @@ class _MenuEmployeurState extends State<MenuEmployeur> {
         child: ListView(
           children: [
             ListTile(
-              leading: const Icon(Icons.list),
-              title: const Text('Liste de vos stages'),
+              leading: Icon(Icons.list),
+              title: Text('Liste de vos stages'),
               onTap: () {
                 setState(() {
                   _currentIndex = 0;
@@ -49,8 +49,8 @@ class _MenuEmployeurState extends State<MenuEmployeur> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.add_box),
-              title: const Text('Ajouter un stage'),
+              leading: Icon(Icons.add_box),
+              title: Text('Ajouter un stage'),
               onTap: () {
                 setState(() {
                   _currentIndex = 1;
@@ -59,8 +59,8 @@ class _MenuEmployeurState extends State<MenuEmployeur> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Modifier profil'),
+              leading: Icon(Icons.person),
+              title: Text('Modifier profil'),
               onTap: () {
                 setState(() {
                   _currentIndex = 2;
@@ -69,11 +69,11 @@ class _MenuEmployeurState extends State<MenuEmployeur> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.supervisor_account),
-              title: const Text('Candidatures des étudiants'),
+              leading: Icon(Icons.supervisor_account),
+              title: Text('Candidatures des étudiants'),
               onTap: () {
                 setState(() {
-                  _currentIndex = 3;
+                  _currentIndex = 3; 
                 });
                 Navigator.pop(context);
               },
@@ -85,6 +85,7 @@ class _MenuEmployeurState extends State<MenuEmployeur> {
     );
   }
 }
+
 
 void main() {
   runApp(const MaterialApp(

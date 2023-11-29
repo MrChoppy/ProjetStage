@@ -4,8 +4,6 @@ import 'package:projetdev/authentication.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CandidaturesEmployeur extends StatefulWidget {
-  const CandidaturesEmployeur({super.key});
-
   @override
   _CandidaturesEmployeurState createState() => _CandidaturesEmployeurState();
 }
@@ -49,17 +47,17 @@ class _CandidaturesEmployeurState extends State<CandidaturesEmployeur> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text('Candidatures Employeur'),
+        title: Text('Candidatures Employeur'),
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center, 
+          crossAxisAlignment:
+              CrossAxisAlignment.center, 
           children: [
             DropdownButton<String>(
               value: selectedStageId,
-              hint: const Text('Sélectionner un stage'),
+              hint: Text('Sélectionner un stage'),
               onChanged: (String? newStageId) {
                 setState(() {
                   selectedStageId = newStageId;
@@ -73,17 +71,16 @@ class _CandidaturesEmployeurState extends State<CandidaturesEmployeur> {
                   }).toList() ??
                   [],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16), 
             FutureBuilder<QuerySnapshot>(
               future: getCandidaturesForStage(selectedStageId ?? ''),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
+                  return CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   return Text('Erreur : ${snapshot.error}');
                 } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Text(
-                      'Aucune candidature trouvée pour ce stage.');
+                  return Text('Aucune candidature trouvée pour ce stage.');
                 } else {
                   print("Candidatures: ${snapshot.data!.docs.length}");
                   return Expanded(
@@ -102,7 +99,7 @@ class _CandidaturesEmployeurState extends State<CandidaturesEmployeur> {
                             builder: (context, etudiantSnapshot) {
                               if (etudiantSnapshot.connectionState ==
                                   ConnectionState.waiting) {
-                                return const CircularProgressIndicator();
+                                return CircularProgressIndicator();
                               } else if (etudiantSnapshot.hasError) {
                                 return Text(
                                     'Erreur : ${etudiantSnapshot.error}');
@@ -117,7 +114,7 @@ class _CandidaturesEmployeurState extends State<CandidaturesEmployeur> {
                                         children: [
                                           Text(
                                               'Nom de l\'étudiant: ${etudiantInfo['nom'] ?? 'N/A'}'),
-                                          const SizedBox(width: 8),
+                                          SizedBox(width: 8),
                                           Text(
                                               '${etudiantInfo['prenom'] ?? 'N/A'}'),
                                         ],
@@ -136,8 +133,10 @@ class _CandidaturesEmployeurState extends State<CandidaturesEmployeur> {
                                       ),
                                     ),
                                     if (index < snapshot.data!.docs.length - 1)
-                                      const Divider(
-                                          thickness: 1, color: Colors.grey),
+                                      Divider(
+                                          thickness: 1,
+                                          color: Colors
+                                              .grey), 
                                   ],
                                 );
                               }

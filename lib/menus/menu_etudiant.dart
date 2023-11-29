@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:projetdev/authentication.dart';
 import 'package:projetdev/pages/stages.dart';
-import 'package:projetdev/pages/update.dart';
-import 'package:projetdev/pages/map.dart';
+import  'package:projetdev/pages/update.dart';
 
 class MenuEtudiant extends StatefulWidget {
   const MenuEtudiant({super.key});
@@ -16,7 +15,6 @@ class _MenuEtudiantState extends State<MenuEtudiant> {
   final List<Widget> _pages = [
     const Stages(),
     const Update(),
-    const Map(),
   ];
 
   @override
@@ -37,8 +35,8 @@ class _MenuEtudiantState extends State<MenuEtudiant> {
         child: ListView(
           children: [
             ListTile(
-              leading: const Icon(Icons.list),
-              title: const Text('Liste des stages'),
+              leading: Icon(Icons.list),
+              title: Text('Liste des stages'),
               onTap: () {
                 setState(() {
                   _currentIndex = 0;
@@ -47,21 +45,11 @@ class _MenuEtudiantState extends State<MenuEtudiant> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Modifier profil'),
+              leading: Icon(Icons.person),
+              title: Text('Modifier profil'),
               onTap: () {
                 setState(() {
                   _currentIndex = 1;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Map'),
-              onTap: () {
-                setState(() {
-                  _currentIndex = 2;
                 });
                 Navigator.pop(context);
               },
