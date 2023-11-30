@@ -113,6 +113,7 @@ class _CandidaturesEmployeurState extends State<CandidaturesEmployeur> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text('Candidatures Employeur'),
       ),
       body: Center(
