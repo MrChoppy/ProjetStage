@@ -45,14 +45,11 @@ class _StagesEmployeurState extends State<StagesEmployeur> {
 
   void _showModifDialog(stageData) {
     posteController = TextEditingController(text: stageData['poste'] ?? '');
-    compagnieController =
-        TextEditingController(text: stageData['compagnie'] ?? '');
+    compagnieController = TextEditingController(text: stageData['compagnie'] ?? '');
     adresseController = TextEditingController(text: stageData['adresse'] ?? '');
-    dateDebutController =
-        TextEditingController(text: stageData['dateDebut'] ?? '');
+    dateDebutController = TextEditingController(text: stageData['dateDebut'] ?? '');
     dateFinController = TextEditingController(text: stageData['dateFin'] ?? '');
-    descriptionController =
-        TextEditingController(text: stageData['description'] ?? '');
+    descriptionController = TextEditingController(text: stageData['description'] ?? '');
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -64,8 +61,7 @@ class _StagesEmployeurState extends State<StagesEmployeur> {
               children: <Widget>[
                 TextFormField(
                   controller: posteController,
-                  decoration:
-                      const InputDecoration(labelText: 'Poste du stagiaire : '),
+                  decoration: const InputDecoration(labelText: 'Poste du stagiaire : '),
                 ),
                 TextFormField(
                   controller: compagnieController,
@@ -77,7 +73,7 @@ class _StagesEmployeurState extends State<StagesEmployeur> {
                 ),
                 TextFormField(
                   controller: dateDebutController,
-                  decoration: const InputDecoration(labelText: 'Date du debut'),
+                  decoration: const InputDecoration(labelText: 'Date du début'),
                   onTap: () => _selectDate(context, dateDebutController),
                 ),
                 TextFormField(
@@ -113,25 +109,71 @@ class _StagesEmployeurState extends State<StagesEmployeur> {
                   },
                   child: const Text('Enregistrer les modifications'),
                 ),
-                
-                ElevatedButton(onPressed: (){
-                  deleteStage(stageData.id);
+                ElevatedButton(
+                  onPressed: () {
+                    deleteStage(stageData.id);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      
                       const SnackBar(
                         content: Text('Vous avez supprimé le stage avec succès!'),
                         duration: Duration(seconds: 2),
                       ),
                     );
                     Navigator.of(context).pop();
-
-                }, child: const Text( 'Supprimer le stage'),
+                  },
+                  child: const Text('Supprimer le stage'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    fetchStudentNames(stageData.id);
+                  },
+                  child: const Text('Afficher les candidats'),
                 ),
               ]),
         );
       },
     );
   }
+
+  // Function to fetch student names and display in an alert
+void fetchStudentNames(String internshipId) {
+  FirebaseFirestore.instance
+      .collection('candidatures')
+      .where('stageId', isEqualTo: internshipId)
+      .get()
+      .then((QuerySnapshot querySnapshot) {
+    List<String> studentIds = querySnapshot.docs.map((doc) => doc['etudiantId'] as String).toList();
+
+    FirebaseFirestore.instance
+        .collection('etudiant')
+        .where(FieldPath.documentId, whereIn: studentIds)
+        .get()
+        .then((QuerySnapshot studentSnapshot) {
+      List<String> studentNames = studentSnapshot.docs
+          .map((doc) => '${doc['prenom']} ${doc['nom']}')
+          .toList();
+
+      // Display student names in an alert
+      String studentNamesText = studentNames.join('\n');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Étudiants ayant postulé au stage'),
+            content: Text(studentNamesText),
+            actions: <Widget>[
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the alert
+                },
+                child: const Text('Fermer'),
+              ),
+            ],
+          );
+        },
+      );
+    });
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -144,10 +186,9 @@ class _StagesEmployeurState extends State<StagesEmployeur> {
           automaticallyImplyLeading: false,
           title: const Text('Liste de vos stages'),
         ),
-        body:  StreamBuilder<QuerySnapshot>(
+        body: StreamBuilder<QuerySnapshot>(
           stream: vueStagesEmployeur(userId), // Get stages de l'employeur
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
             } else if (snapshot.hasError) {
@@ -173,44 +214,44 @@ class _StagesEmployeurState extends State<StagesEmployeur> {
                       return Column(
                         children: [
                           ListTile(
-                              title: Text(
-                                data['poste'] ?? '',
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            title: Text(
+                              data['poste'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
                               ),
-                              subtitle: Text(
-                                data['description'] ?? '',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                ),
+                            ),
+                            subtitle: Text(
+                              data['description'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 16,
                               ),
-                              onTap: () {
-                                if (stage.id != "") {
-                                  _showModifDialog(stage);
-                                } else {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text('Erreur'),
-                                        content: const Text(
-                                            'Les informations de l\'employeur ne sont plus disponibles.'),
-                                        actions: [
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(context)
-                                                  .pop(); // Ferme le popup d'erreur.
-                                            },
-                                            child: const Text('OK'),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                }
-                              }),
+                            ),
+                            onTap: () {
+                              if (stage.id != "") {
+                                _showModifDialog(stage);
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Erreur'),
+                                      content: const Text(
+                                          'Les informations de l\'employeur ne sont plus disponibles.'),
+                                      actions: [
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop(); // Ferme le popup d'erreur.
+                                          },
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }
+                            },
+                          ),
                           const Divider(
                             color: Colors.grey,
                             thickness: 1.0,
