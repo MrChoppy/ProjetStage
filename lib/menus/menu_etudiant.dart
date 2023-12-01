@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projetdev/authentication.dart';
+import 'package:projetdev/pages/soumissions.dart';
 import 'package:projetdev/pages/stages.dart';
 import  'package:projetdev/pages/update.dart';
 
@@ -15,6 +16,7 @@ class _MenuEtudiantState extends State<MenuEtudiant> {
   final List<Widget> _pages = [
     const Stages(),
     const Update(),
+    Soumissions(),
   ];
 
   @override
@@ -50,6 +52,16 @@ class _MenuEtudiantState extends State<MenuEtudiant> {
               onTap: () {
                 setState(() {
                   _currentIndex = 1;
+                });
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.assignment),
+              title: Text('Mes Soumissions'),
+              onTap: () {
+                setState(() {
+                  _currentIndex = 2;
                 });
                 Navigator.pop(context);
               },

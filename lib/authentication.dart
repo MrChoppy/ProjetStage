@@ -574,3 +574,54 @@ Future<void> deleteStageInfo(String stageId) async {
     print('Error deleting stage: $e');
   }
 }
+
+
+Future<List<Map<String, dynamic>>> getSoumissions() async {
+  try {
+    User? utilisateur = getCurrentUser();
+    if (utilisateur != null) {
+      String idUtilisateur = utilisateur.uid;
+      QuerySnapshot soumissionsQuery = await FirebaseFirestore.instance
+          .collection('candidatures')
+          .where('etudiantId', isEqualTo: idUtilisateur)
+          .get();
+
+      List<Map<String, dynamic>> soumissions = [];
+      for (QueryDocumentSnapshot candidature in soumissionsQuery.docs) {
+        String stageId = candidature['stageId'];
+        Map<String, dynamic> stageInfo = await getStageInfo(stageId);
+        soumissions.add({
+          'stageId': stageId,
+          'compagnie': stageInfo['compagnie'],
+          'poste': stageInfo['poste'],
+          'statut': candidature['statut'],
+        });
+      }
+
+      return soumissions;
+    } else {
+      throw Exception('Utilisateur non trouvé lors de la récupération des soumissions.');
+    }
+  } catch (e) {
+    print('Erreur lors de la récupération des soumissions : $e');
+    throw Exception('Erreur lors de la récupération des soumissions : $e');
+  }
+}
+
+Future<Map<String, dynamic>> getStageInfo(String stageId) async {
+  try {
+    DocumentSnapshot stageSnapshot = await FirebaseFirestore.instance
+        .collection('stages')
+        .doc(stageId)
+        .get();
+
+    if (stageSnapshot.exists) {
+      return stageSnapshot.data() as Map<String, dynamic>;
+    } else {
+      return {};
+    }
+  } catch (e) {
+    print('Erreur lors de la récupération des informations du stage : $e');
+    return {};
+  }
+}
