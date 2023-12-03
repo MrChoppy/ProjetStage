@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:projetdev/authentication.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
+
 class CandidaturesEmployeur extends StatefulWidget {
   @override
   _CandidaturesEmployeurState createState() => _CandidaturesEmployeurState();
@@ -11,10 +13,19 @@ class _CandidaturesEmployeurState extends State<CandidaturesEmployeur> {
   String? selectedStageId;
   List<QueryDocumentSnapshot>? stages;
 
+ StreamController<List<QueryDocumentSnapshot>> candidaturesStreamController =
+StreamController<List<QueryDocumentSnapshot>>();
+
   @override
   void initState() {
     super.initState();
     fetchEmployeurStages();
+  }
+
+  @override
+  void dispose() {
+    candidaturesStreamController.close();
+    super.dispose();
   }
 
   Future<void> fetchEmployeurStages() async {
@@ -40,6 +51,13 @@ class _CandidaturesEmployeurState extends State<CandidaturesEmployeur> {
     } catch (e) {
       print('Erreur lors du chargement des titres des stages : $e');
     }
+  }
+
+  Stream<QuerySnapshot> getCandidaturesForStage(String stageId) {
+    return FirebaseFirestore.instance
+        .collection('candidatures')
+        .where('stageId', isEqualTo: stageId)
+        .snapshots();
   }
 
   Future<Map<String, dynamic>> getEtudiantInfo(String etudiantId) async {
@@ -138,8 +156,8 @@ class _CandidaturesEmployeurState extends State<CandidaturesEmployeur> {
                   [],
             ),
             SizedBox(height: 16),
-            FutureBuilder<QuerySnapshot>(
-              future: getCandidaturesForStage(selectedStageId ?? ''),
+            StreamBuilder<QuerySnapshot>(
+              stream: getCandidaturesForStage(selectedStageId ?? ''),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return CircularProgressIndicator();
@@ -148,6 +166,8 @@ class _CandidaturesEmployeurState extends State<CandidaturesEmployeur> {
                 } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return Text('Aucune candidature trouvée pour ce stage.');
                 } else {
+                  candidaturesStreamController.add(snapshot.data!.docs);
+
                   return Expanded(
                     child: ListView.builder(
                       itemCount: snapshot.data!.docs.length,
