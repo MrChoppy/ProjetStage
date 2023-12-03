@@ -39,6 +39,8 @@ dependencies:
   firebase_auth: ^4.9.0
   cloud_firestore: ^4.9.1
   intl: ^0.18.1
+  flutter_osm_plugin: ^0.70.3
+  http: ^1.1.2
 
 dev_dependencies:
   flutter_test:

@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 
 class CandidaturesEmployeur extends StatefulWidget {
+  const CandidaturesEmployeur({super.key});
+
   @override
   _CandidaturesEmployeurState createState() => _CandidaturesEmployeurState();
 }
@@ -13,8 +15,8 @@ class _CandidaturesEmployeurState extends State<CandidaturesEmployeur> {
   String? selectedStageId;
   List<QueryDocumentSnapshot>? stages;
 
- StreamController<List<QueryDocumentSnapshot>> candidaturesStreamController =
-StreamController<List<QueryDocumentSnapshot>>();
+  StreamController<List<QueryDocumentSnapshot>> candidaturesStreamController =
+      StreamController<List<QueryDocumentSnapshot>>();
 
   @override
   void initState() {
@@ -71,12 +73,14 @@ StreamController<List<QueryDocumentSnapshot>>();
         return etudiantSnapshot.data() as Map<String, dynamic>;
       }
     } catch (e) {
-      print('Erreur lors de la récupération des informations de l\'étudiant : $e');
+      print(
+          'Erreur lors de la récupération des informations de l\'étudiant : $e');
     }
     return {}; // Return an empty map in case of an error
   }
 
-  Future<void> updateCandidatureStatus(String candidatureId, String newStatus) async {
+  Future<void> updateCandidatureStatus(
+      String candidatureId, String newStatus) async {
     try {
       await FirebaseFirestore.instance
           .collection('candidatures')
@@ -96,22 +100,22 @@ StreamController<List<QueryDocumentSnapshot>>();
       context: context,
       builder: (BuildContext context) {
         return SimpleDialog(
-          title: Text('Changer le statut de la candidature'),
+          title: const Text('Changer le statut de la candidature'),
           children: [
             ListTile(
-              title: Text('En attente'),
+              title: const Text('En attente'),
               onTap: () {
                 Navigator.pop(context, 'En attente');
               },
             ),
             ListTile(
-              title: Text('Convoqué à une entrevue'),
+              title: const Text('Convoqué à une entrevue'),
               onTap: () {
                 Navigator.pop(context, 'Convoqué à une entrevue');
               },
             ),
             ListTile(
-              title: Text('Refusé'),
+              title: const Text('Refusé'),
               onTap: () {
                 Navigator.pop(context, 'Refusé');
               },
@@ -132,7 +136,7 @@ StreamController<List<QueryDocumentSnapshot>>();
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text('Candidatures Employeur'),
+        title: const Text('Candidatures Employeur'),
       ),
       body: Center(
         child: Column(
@@ -141,30 +145,31 @@ StreamController<List<QueryDocumentSnapshot>>();
           children: [
             DropdownButton<String>(
               value: selectedStageId,
-              hint: Text('Sélectionner un stage'),
+              hint: const Text('Sélectionner un stage'),
               onChanged: (String? newStageId) {
                 setState(() {
                   selectedStageId = newStageId;
                 });
               },
               items: stages?.map((stage) {
-                return DropdownMenuItem<String>(
-                  value: stage.id,
-                  child: Text(stage['poste'] as String),
-                );
-              }).toList() ??
+                    return DropdownMenuItem<String>(
+                      value: stage.id,
+                      child: Text(stage['poste'] as String),
+                    );
+                  }).toList() ??
                   [],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             StreamBuilder<QuerySnapshot>(
               stream: getCandidaturesForStage(selectedStageId ?? ''),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   return Text('Erreur : ${snapshot.error}');
                 } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Text('Aucune candidature trouvée pour ce stage.');
+                  return const Text(
+                      'Aucune candidature trouvée pour ce stage.');
                 } else {
                   candidaturesStreamController.add(snapshot.data!.docs);
 
@@ -172,15 +177,18 @@ StreamController<List<QueryDocumentSnapshot>>();
                     child: ListView.builder(
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, index) {
-                        final candidatureData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
-                        final etudiantId = candidatureData['etudiantId'] as String;
+                        final candidatureData = snapshot.data!.docs[index]
+                            .data() as Map<String, dynamic>;
+                        final etudiantId =
+                            candidatureData['etudiantId'] as String;
                         final candidatureId = snapshot.data!.docs[index].id;
 
                         return FutureBuilder<Map<String, dynamic>>(
                           future: getEtudiantInfo(etudiantId),
                           builder: (context, etudiantSnapshot) {
-                            if (etudiantSnapshot.connectionState == ConnectionState.waiting) {
-                              return CircularProgressIndicator();
+                            if (etudiantSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
                             } else if (etudiantSnapshot.hasError) {
                               return Text('Erreur : ${etudiantSnapshot.error}');
                             } else {
@@ -191,25 +199,34 @@ StreamController<List<QueryDocumentSnapshot>>();
                                   ListTile(
                                     title: Row(
                                       children: [
-                                        Text('Nom de l\'étudiant: ${etudiantInfo['nom'] ?? 'N/A'}'),
-                                        SizedBox(width: 8),
-                                        Text('${etudiantInfo['prenom'] ?? 'N/A'}'),
+                                        Text(
+                                            'Nom de l\'étudiant: ${etudiantInfo['nom'] ?? 'N/A'}'),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                            '${etudiantInfo['prenom'] ?? 'N/A'}'),
                                       ],
                                     ),
                                     subtitle: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Text('Email de l\'étudiant: ${etudiantInfo['email'] ?? 'N/A'}'),
-                                        Text('Remarques: ${etudiantInfo['remarques'] ?? 'N/A'}'),
-                                        Text('Date de postulation: ${candidatureData['dateCandidature'] ?? 'N/A'}'),
-                                        Text('Statut: ${candidatureData['statut'] ?? 'N/A'}'),
+                                        Text(
+                                            'Email de l\'étudiant: ${etudiantInfo['email'] ?? 'N/A'}'),
+                                        Text(
+                                            'Remarques: ${etudiantInfo['remarques'] ?? 'N/A'}'),
+                                        Text(
+                                            'Date de postulation: ${candidatureData['dateCandidature'] ?? 'N/A'}'),
+                                        Text(
+                                            'Statut: ${candidatureData['statut'] ?? 'N/A'}'),
                                       ],
                                     ),
                                     onTap: () {
                                       showStatusDialog(candidatureId);
                                     },
                                   ),
-                                  if (index < snapshot.data!.docs.length - 1) Divider(thickness: 1, color: Colors.grey),
+                                  if (index < snapshot.data!.docs.length - 1)
+                                    const Divider(
+                                        thickness: 1, color: Colors.grey),
                                 ],
                               );
                             }

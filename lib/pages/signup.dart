@@ -46,9 +46,45 @@ class _SignupState extends State<Signup> {
     return phoneRegex.hasMatch(phoneNumber);
   }
 
-   bool isPasswordValid(String password) {
+  bool isPasswordValid(String password) {
     final passwordRegEx = RegExp(r'^.{6,}$');
     return passwordRegEx.hasMatch(password);
+  }
+
+  bool isAdresseValid(adresse_) {
+    final String adresse = adresse_;
+
+    if (adresse.isEmpty) {
+      setState(() {
+        errorText = 'Veuillez entrer une adresse.';
+      });
+      return false;
+    }
+
+    final List<String> addressComponents = adresse.split(' ');
+
+    if (addressComponents.length < 3) {
+      setState(() {
+        errorText =
+            'Adresse invalide. Veuillez inclure le numéro, la rue et la ville au minimum.';
+      });
+      return false;
+    }
+
+    final String numero = addressComponents[0].trim();
+
+    if (int.tryParse(numero) == null) {
+      setState(() {
+        errorText =
+            'Le numéro dans l\'adresse doit être composé uniquement de chiffres.';
+      });
+      return false;
+    }
+
+    setState(() {
+      errorText = '';
+    });
+    return true;
   }
 
   @override
@@ -78,7 +114,7 @@ class _SignupState extends State<Signup> {
                     child: Text(userType),
                   );
                 }).toList(),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Je suis un :',
                 ),
               ),
@@ -89,7 +125,8 @@ class _SignupState extends State<Signup> {
                 width: 400,
                 child: TextField(
                   controller: nomEntrepriseController,
-                  decoration: InputDecoration(labelText: "Nom de l'entreprise"),
+                  decoration:
+                      const InputDecoration(labelText: "Nom de l'entreprise"),
                 ),
               ),
             ),
@@ -99,7 +136,7 @@ class _SignupState extends State<Signup> {
                 width: 400,
                 child: TextField(
                   controller: prenomPersonneContactController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       labelText: "Prénom de la personne responsable"),
                 ),
               ),
@@ -110,7 +147,7 @@ class _SignupState extends State<Signup> {
                 width: 400,
                 child: TextField(
                   controller: nomPersonneContactController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                       labelText: "Nom de la personne responsable"),
                 ),
               ),
@@ -121,7 +158,7 @@ class _SignupState extends State<Signup> {
                 width: 400,
                 child: TextField(
                   controller: prenomController,
-                  decoration: InputDecoration(labelText: 'Prénom'),
+                  decoration: const InputDecoration(labelText: 'Prénom'),
                 ),
               ),
             ),
@@ -131,7 +168,7 @@ class _SignupState extends State<Signup> {
                 width: 400,
                 child: TextField(
                   controller: nomController,
-                  decoration: InputDecoration(labelText: 'Nom'),
+                  decoration: const InputDecoration(labelText: 'Nom'),
                 ),
               ),
             ),
@@ -157,7 +194,7 @@ class _SignupState extends State<Signup> {
                 width: 400,
                 child: TextField(
                   controller: remarquesController,
-                  decoration: InputDecoration(labelText: "Remarques"),
+                  decoration: const InputDecoration(labelText: "Remarques"),
                 ),
               ),
             ),
@@ -167,26 +204,27 @@ class _SignupState extends State<Signup> {
                 width: 400,
                 child: TextField(
                   controller: posteTelephoniqueController,
-                  decoration: InputDecoration(labelText: "Poste téléphonique"),
+                  decoration:
+                      const InputDecoration(labelText: "Poste téléphonique"),
                 ),
               ),
             ),
             Container(
               width: 400,
               height: 150,
-              margin: EdgeInsets.only(top: 1.0),
+              margin: const EdgeInsets.only(top: 1.0),
               child: Column(
                 children: [
                   TextFormField(
                     controller: emailController,
                     focusNode: emailFocusNode,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Email',
                     ),
                   ),
                   TextField(
                     controller: passwordController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Mot de passe',
                     ),
                     obscureText: true,
@@ -255,26 +293,27 @@ class _SignupState extends State<Signup> {
                     errorText =
                         "Email non valide. L'email doit avoir la syntaxe suivante : 1234567@cmontmorency.qc.ca.";
                   });
-                }  else if (selectedUserType == "Employeur" &&
+                } else if (selectedUserType == "Employeur" &&
                     !isEmailEmployeurValid(email)) {
                   setState(() {
                     errorText =
                         "Email non valide. L'email doit contenir un @ et un .";
                   });
-                  } else if (passwordController.text.isEmpty) {
+                } else if (passwordController.text.isEmpty) {
                   setState(() {
                     errorText = "Le champ 'Mot de passe' est requis.";
                   });
-                  } else if (!isPasswordValid(password)) {
+                } else if (!isPasswordValid(password)) {
                   setState(() {
                     errorText =
                         "Le mot de passe doit contenir au moins 6 caractères.";
                   });
-                }
-                 else {
+                } else if (!isAdresseValid(adresseController.text)) {
+                } else {
                   setState(() {
                     errorText = null;
                   });
+
                   if (selectedUserType == "Étudiant" &&
                       isEmailValid(email) &&
                       isPhoneValid(phoneNumber)) {

@@ -28,17 +28,16 @@ Future<bool> signInWithEmailAndPassword(
       if (context.mounted) {
         navigateBasedOnUserRole(userPerms, context);
       }
-      return true; 
+      return true;
     } else {
       print('User role not recognized.');
-      return false; 
+      return false;
     }
   } catch (e) {
     print('Erreur : $e');
-    return false; 
+    return false;
   }
 }
-
 
 // Déconnecter l'utilisateur
 Future<void> signOut(BuildContext context) async {
@@ -117,7 +116,6 @@ Future<void> updateUserTextFields(
       telephoneController.text = etudiantData['telephone'] ?? '';
       remarquesController.text = etudiantData['remarques'] ?? '';
     }
-    
   } else if (userType == 'Employeur') {
     // Get le snapshot de l'employeur
     DocumentSnapshot employeurSnapshot =
@@ -266,8 +264,6 @@ Future<QuerySnapshot> vueStages() async {
   }
 }
 
-
-
 Future<Map<String, dynamic>> getEmployeurInfo(String employeurId) async {
   try {
     DocumentSnapshot employeurSnapshot = await FirebaseFirestore.instance
@@ -286,6 +282,23 @@ Future<Map<String, dynamic>> getEmployeurInfo(String employeurId) async {
   }
 }
 
+Future<String> getAdresseEtudiant(String uid) async {
+  try {
+    DocumentSnapshot studentDoc =
+        await FirebaseFirestore.instance.collection('etudiant').doc(uid).get();
+
+    if (studentDoc.exists) {
+      Map<String, dynamic> studentData =
+          studentDoc.data() as Map<String, dynamic>;
+      return studentData['adresse'] ?? '';
+    } else {
+      return '';
+    }
+  } catch (e) {
+    print('Error retrieving student address: $e');
+    return '';
+  }
+}
 //
 //
 //  EMPLOYEUR
@@ -424,7 +437,6 @@ Future<void> getStages() async {
         for (QueryDocumentSnapshot doc in stagesQuery.docs) {
           titles.add(doc['poste'] as String);
         }
-
       } else {
         print('Vous n\'avez pas l\'autorisation de consulter les stages.');
       }
@@ -433,24 +445,27 @@ Future<void> getStages() async {
     print('Erreur lors du chargement des titres des stages : $e');
   }
 }
- Future<Map<String, dynamic>> getEtudiantInfo(String etudiantId) async {
-    try {
-      DocumentSnapshot etudiantSnapshot = await FirebaseFirestore.instance
-          .collection('etudiant')
-          .doc(etudiantId)
-          .get();
 
-      if (etudiantSnapshot.exists) {
-        return etudiantSnapshot.data() as Map<String, dynamic>;
-      } else {
-        // Retourner un map vide si l'étudiant n'existe pas
-        return {};
-      }
-    } catch (e) {
-      print('Erreur lors de la récupération des informations de l\'étudiant : $e');
+Future<Map<String, dynamic>> getEtudiantInfo(String etudiantId) async {
+  try {
+    DocumentSnapshot etudiantSnapshot = await FirebaseFirestore.instance
+        .collection('etudiant')
+        .doc(etudiantId)
+        .get();
+
+    if (etudiantSnapshot.exists) {
+      return etudiantSnapshot.data() as Map<String, dynamic>;
+    } else {
+      // Retourner un map vide si l'étudiant n'existe pas
       return {};
     }
+  } catch (e) {
+    print(
+        'Erreur lors de la récupération des informations de l\'étudiant : $e');
+    return {};
   }
+}
+
 Future<QuerySnapshot<Object?>> getCandidaturesForStage(String stageId) async {
   try {
     return await FirebaseFirestore.instance
@@ -462,7 +477,7 @@ Future<QuerySnapshot<Object?>> getCandidaturesForStage(String stageId) async {
   }
 }
 
-Stream<QuerySnapshot> vueStagesEmployeur(String uid)  {
+Stream<QuerySnapshot> vueStagesEmployeur(String uid) {
   try {
     return FirebaseFirestore.instance
         .collection('stages')
@@ -472,7 +487,6 @@ Stream<QuerySnapshot> vueStagesEmployeur(String uid)  {
     throw Exception('Erreur lors de la recuperation des stages: $e');
   }
 }
-
 
 Future<void> updateStageInfo(
     String stageId, Map<String, dynamic> newData) async {
@@ -486,6 +500,7 @@ Future<void> updateStageInfo(
     throw Exception('Error updating stage info: $e');
   }
 }
+
 Future<bool> hasStudentApplied(String studentId, String stageId) async {
   QuerySnapshot query = await FirebaseFirestore.instance
       .collection('candidatures')
@@ -495,6 +510,7 @@ Future<bool> hasStudentApplied(String studentId, String stageId) async {
 
   return query.docs.isNotEmpty;
 }
+
 Future<void> updateStage(
     String stageId,
     String posteController,
@@ -518,6 +534,7 @@ Future<void> updateStage(
     print('Error updating stage: $e');
   }
 }
+
 Future<void> deleteStage(String stageId) async {
   try {
     // Supprime d'abord toutes les candidatures associées au stage
@@ -532,7 +549,8 @@ Future<void> deleteStage(String stageId) async {
 
 Future<void> deleteCandidaturesForStage(String stageId) async {
   try {
-    final QuerySnapshot<Object?> candidaturesQuery = await FirebaseFirestore.instance
+    final QuerySnapshot<Object?> candidaturesQuery = await FirebaseFirestore
+        .instance
         .collection('candidatures')
         .where('stageId', isEqualTo: stageId)
         .get();
@@ -550,8 +568,10 @@ Future<void> deleteCandidatureInfo(String candidatureId) async {
   try {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-    final CollectionReference candidaturesCollection = firestore.collection('candidatures');
-    final DocumentReference candidatureDocument = candidaturesCollection.doc(candidatureId);
+    final CollectionReference candidaturesCollection =
+        firestore.collection('candidatures');
+    final DocumentReference candidatureDocument =
+        candidaturesCollection.doc(candidatureId);
 
     await candidatureDocument.delete();
 
@@ -560,6 +580,7 @@ Future<void> deleteCandidatureInfo(String candidatureId) async {
     print('Error deleting candidature: $e');
   }
 }
+
 Future<void> deleteStageInfo(String stageId) async {
   try {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -574,7 +595,6 @@ Future<void> deleteStageInfo(String stageId) async {
     print('Error deleting stage: $e');
   }
 }
-
 
 Future<List<Map<String, dynamic>>> getSoumissions() async {
   try {
@@ -600,7 +620,8 @@ Future<List<Map<String, dynamic>>> getSoumissions() async {
 
       return soumissions;
     } else {
-      throw Exception('Utilisateur non trouvé lors de la récupération des soumissions.');
+      throw Exception(
+          'Utilisateur non trouvé lors de la récupération des soumissions.');
     }
   } catch (e) {
     print('Erreur lors de la récupération des soumissions : $e');

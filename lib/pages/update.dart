@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '/authentication.dart';
-import '/validateurs.dart';
 
 class Update extends StatefulWidget {
   const Update({Key? key}) : super(key: key);
@@ -43,25 +42,76 @@ class _UpdateState extends State<Update> {
       });
 
       await updateUserTextFields(
-        userTypeValue!,
-        nomController,
-        prenomController,
-        adresseController,
-        telephoneController,
-        remarquesController,
-        nomEntrepriseController,
-        prenomPersonneContactController,
-        nomPersonneContactController,
-        posteTelephoniqueController  
-      );
+          userTypeValue!,
+          nomController,
+          prenomController,
+          adresseController,
+          telephoneController,
+          remarquesController,
+          nomEntrepriseController,
+          prenomPersonneContactController,
+          nomPersonneContactController,
+          posteTelephoniqueController);
     });
+  }
+
+  bool isPhoneValid(String phoneNumber) {
+    final phoneRegex = RegExp(r'^\d{3}-\d{3}-\d{4}$');
+    if (!phoneRegex.hasMatch(phoneNumber)) {
+      setState(() {
+        errorMessage =
+            "Numéro de téléphone non valide. Doit avoir la syntaxe suivante : 123-456-7890";
+      });
+      return false;
+    } else {
+      setState(() {
+        errorMessage = "";
+      });
+      return true;
+    }
+  }
+
+  bool isAdresseValid(adresse_) {
+    final String adresse = adresse_;
+
+    if (adresse.isEmpty) {
+      setState(() {
+        errorMessage = 'Veuillez entrer une adresse.';
+        successMessage = '';
+      });
+      return false;
+    }
+
+    final List<String> addressComponents = adresse.split(' ');
+
+    if (addressComponents.length < 3) {
+      setState(() {
+        errorMessage =
+            'Adresse invalide. Veuillez inclure le numéro, la rue et la ville au minimum.';
+        successMessage = '';
+      });
+      return false;
+    }
+
+    final String numero = addressComponents[0].trim();
+
+    if (int.tryParse(numero) == null) {
+      setState(() {
+        errorMessage =
+            'Le numéro dans l\'adresse doit être composé uniquement de chiffres.';
+        successMessage = '';
+      });
+      return false;
+    }
+
+    setState(() {
+      errorMessage = '';
+    });
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
-
-    final String phoneNumber = telephoneController.text;
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -153,8 +203,7 @@ class _UpdateState extends State<Update> {
                 width: 400,
                 child: TextField(
                   controller: remarquesController,
-                  decoration: const InputDecoration(
-                      labelText: "Remarques"),
+                  decoration: const InputDecoration(labelText: "Remarques"),
                 ),
               ),
             ),
@@ -181,14 +230,10 @@ class _UpdateState extends State<Update> {
                     'telephone': telephoneController.text,
                     'remarques': remarquesController.text
                   };
-                  if (isPhoneValid(telephoneController.text)) {
+                  if (isPhoneValid(telephoneController.text) &&
+                      isAdresseValid(adresseController.text)) {
                     await updateEtudiantInfo(uid, newData);
-                  } else if (!isPhoneValid(telephoneController.text)){
-                    setState(() {
-                      errorMessage = "Numéro de téléphone non valide. Doit avoir la syntaxe suivante : 123-456-7890";
-                     });
-                  } 
-                  
+                  }
                 } else if (userTypeValue == "Employeur") {
                   String uid = getUserId();
                   Map<String, dynamic> newData = {
@@ -200,22 +245,19 @@ class _UpdateState extends State<Update> {
                     'telephone': telephoneController.text,
                     'posteTelephonique': posteTelephoniqueController.text,
                   };
-                  if (isPhoneValid(telephoneController.text)) {
-                    await updateEmployeurInfo(uid, newData);
-                  } else if (!isPhoneValid(telephoneController.text)) {
-                     setState(() {
-                      errorMessage = "Numéro de téléphone non valide. Doit avoir la syntaxe suivante : 123-456-7890";
-                     });
+                  if (isPhoneValid(telephoneController.text) &&
+                      isAdresseValid(adresseController.text)) {
+                    await updateEtudiantInfo(uid, newData);
                   }
-                  
                 }
                 // success message
-                if (isPhoneValid(telephoneController.text)) { 
-                setState(() {
-                  successMessage = 'Update reussi!';
-                  errorMessage = "";
-                });
-                } 
+                if (isPhoneValid(telephoneController.text) &
+                    isAdresseValid(adresseController.text)) {
+                  setState(() {
+                    successMessage = 'Update reussi!';
+                    errorMessage = "";
+                  });
+                }
               },
               child: const Text("Update"),
             ),

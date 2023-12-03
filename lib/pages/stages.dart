@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:projetdev/authentication.dart';
 import 'package:intl/intl.dart';
+import 'package:projetdev/pages/map.dart';
 
 class Stages extends StatefulWidget {
-  const Stages({Key? key});
+  const Stages({super.key});
 
   @override
   _StagesState createState() => _StagesState();
@@ -17,123 +18,160 @@ class _StagesState extends State<Stages> {
     if (user != null) {
       String userId = user.uid;
       bool hasApplied = await hasStudentApplied(userId, stageId);
-
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Détails du stage'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Poste:',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  stageData['poste'] ?? '',
-                  style: const TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Description:',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                Container(
-                  constraints: const BoxConstraints(
-                    maxWidth: 700,
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Détails du stage'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Poste:',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  child: Text(
-                    stageData['description'] ?? '',
+                  Text(
+                    stageData['poste'] ?? '',
                     style: const TextStyle(fontSize: 16),
-                    textAlign: TextAlign.justify,
                   ),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Adresse:',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  stageData['adresse'] ?? '',
-                  style: const TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: () async {
-                  if (hasApplied) {
-                    QuerySnapshot query = await FirebaseFirestore.instance
-                        .collection('candidatures')
-                        .where('etudiantId', isEqualTo: userId)
-                        .where('stageId', isEqualTo: stageId)
-                        .get();
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Description:',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Container(
+                    constraints: const BoxConstraints(
+                      maxWidth: 700,
+                    ),
+                    child: Text(
+                      stageData['description'] ?? '',
+                      style: const TextStyle(fontSize: 16),
+                      textAlign: TextAlign.justify,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Adresse:',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    stageData['adresse'] ?? '',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () async {
+                    if (hasApplied) {
+                      QuerySnapshot query = await FirebaseFirestore.instance
+                          .collection('candidatures')
+                          .where('etudiantId', isEqualTo: userId)
+                          .where('stageId', isEqualTo: stageId)
+                          .get();
 
-                    if (query.docs.isNotEmpty) {
-                      String dateCandidature = query.docs[0]['dateCandidature'];
+                      if (query.docs.isNotEmpty) {
+                        String dateCandidature =
+                            query.docs[0]['dateCandidature'];
+                        if (context.mounted) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Erreur'),
+                                content: Text(
+                                    'Vous avez déjà postulé le $dateCandidature.'),
+                                actions: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      }
+                    } else {
+                      DateTime currentDateTime = DateTime.now();
+                      String currentDate =
+                          DateFormat('y/MM/dd HH:mm').format(currentDateTime);
+
+                      await FirebaseFirestore.instance
+                          .collection('candidatures')
+                          .add({
+                        'etudiantId': userId,
+                        'stageId': stageId,
+                        'statut': 'En attente',
+                        'dateCandidature': currentDate,
+                      });
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
+
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Succès'),
+                              content: const Text(
+                                  'Votre candidature a été enregistrée avec succès.'),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    }
+                  },
+                  child: const Text('POSTULER'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    String etudiantAddress = await getAdresseEtudiant(userId);
+                    if (context.mounted) {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: const Text('Erreur'),
-                            content: Text(
-                                'Vous avez déjà postulé le $dateCandidature.'),
+                            content: Container(
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              height: MediaQuery.of(context).size.height * 0.6,
+                              child: CustomMap(
+                                stageAdresse: stageData['adresse'],
+                                etudiantAdresse: etudiantAddress,
+                              ),
+                            ),
                             actions: [
-                              ElevatedButton(
+                              TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: const Text('OK'),
+                                child: const Text('Close'),
                               ),
                             ],
                           );
                         },
                       );
                     }
-                  } else {
-                    DateTime currentDateTime = DateTime.now();
-                    String currentDate = DateFormat('y/MM/dd HH:mm').format(currentDateTime);
-
-                    await FirebaseFirestore.instance
-                        .collection('candidatures')
-                        .add({
-                      'etudiantId': userId,
-                      'stageId': stageId,
-                      'statut': 'En attente',
-                      'dateCandidature': currentDate,
-                    });
-
-                    Navigator.of(context).pop();
-
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Succès'),
-                          content: const Text(
-                              'Votre candidature a été enregistrée avec succès.'),
-                          actions: [
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                },
-                child: const Text('POSTULER'),
-              ),
-            ],
-          );
-        },
-      );
+                  },
+                  child: const Text('ITINERAIRE'),
+                )
+              ],
+            );
+          },
+        );
+      }
     } else {
       print('**********');
     }
@@ -233,6 +271,12 @@ class _StagesState extends State<Stages> {
                                           content: const Text(
                                               "Les informations de l'employeur ne sont plus disponibles."),
                                           actions: [
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text('OK'),
+                                            ),
                                             ElevatedButton(
                                               onPressed: () {
                                                 Navigator.of(context).pop();

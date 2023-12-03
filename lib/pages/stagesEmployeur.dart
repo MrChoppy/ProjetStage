@@ -45,11 +45,14 @@ class _StagesEmployeurState extends State<StagesEmployeur> {
 
   void _showModifDialog(stageData) {
     posteController = TextEditingController(text: stageData['poste'] ?? '');
-    compagnieController = TextEditingController(text: stageData['compagnie'] ?? '');
+    compagnieController =
+        TextEditingController(text: stageData['compagnie'] ?? '');
     adresseController = TextEditingController(text: stageData['adresse'] ?? '');
-    dateDebutController = TextEditingController(text: stageData['dateDebut'] ?? '');
+    dateDebutController =
+        TextEditingController(text: stageData['dateDebut'] ?? '');
     dateFinController = TextEditingController(text: stageData['dateFin'] ?? '');
-    descriptionController = TextEditingController(text: stageData['description'] ?? '');
+    descriptionController =
+        TextEditingController(text: stageData['description'] ?? '');
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -61,7 +64,8 @@ class _StagesEmployeurState extends State<StagesEmployeur> {
               children: <Widget>[
                 TextFormField(
                   controller: posteController,
-                  decoration: const InputDecoration(labelText: 'Poste du stagiaire : '),
+                  decoration:
+                      const InputDecoration(labelText: 'Poste du stagiaire : '),
                 ),
                 TextFormField(
                   controller: compagnieController,
@@ -114,7 +118,8 @@ class _StagesEmployeurState extends State<StagesEmployeur> {
                     deleteStage(stageData.id);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Vous avez supprimé le stage avec succès!'),
+                        content:
+                            Text('Vous avez supprimé le stage avec succès!'),
                         duration: Duration(seconds: 2),
                       ),
                     );
@@ -135,45 +140,46 @@ class _StagesEmployeurState extends State<StagesEmployeur> {
   }
 
   // Function to fetch student names and display in an alert
-void fetchStudentNames(String internshipId) {
-  FirebaseFirestore.instance
-      .collection('candidatures')
-      .where('stageId', isEqualTo: internshipId)
-      .get()
-      .then((QuerySnapshot querySnapshot) {
-    List<String> studentIds = querySnapshot.docs.map((doc) => doc['etudiantId'] as String).toList();
-
+  void fetchStudentNames(String internshipId) {
     FirebaseFirestore.instance
-        .collection('etudiant')
-        .where(FieldPath.documentId, whereIn: studentIds)
+        .collection('candidatures')
+        .where('stageId', isEqualTo: internshipId)
         .get()
-        .then((QuerySnapshot studentSnapshot) {
-      List<String> studentNames = studentSnapshot.docs
-          .map((doc) => '${doc['prenom']} ${doc['nom']}')
-          .toList();
+        .then((QuerySnapshot querySnapshot) {
+      List<String> studentIds =
+          querySnapshot.docs.map((doc) => doc['etudiantId'] as String).toList();
 
-      // Display student names in an alert
-      String studentNamesText = studentNames.join('\n');
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Étudiants ayant postulé au stage'),
-            content: Text(studentNamesText),
-            actions: <Widget>[
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close the alert
-                },
-                child: const Text('Fermer'),
-              ),
-            ],
-          );
-        },
-      );
+      FirebaseFirestore.instance
+          .collection('etudiant')
+          .where(FieldPath.documentId, whereIn: studentIds)
+          .get()
+          .then((QuerySnapshot studentSnapshot) {
+        List<String> studentNames = studentSnapshot.docs
+            .map((doc) => '${doc['prenom']} ${doc['nom']}')
+            .toList();
+
+        // Display student names in an alert
+        String studentNamesText = studentNames.join('\n');
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Étudiants ayant postulé au stage'),
+              content: Text(studentNamesText),
+              actions: <Widget>[
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the alert
+                  },
+                  child: const Text('Fermer'),
+                ),
+              ],
+            );
+          },
+        );
+      });
     });
-  });
-}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -188,7 +194,8 @@ void fetchStudentNames(String internshipId) {
         ),
         body: StreamBuilder<QuerySnapshot>(
           stream: vueStagesEmployeur(userId), // Get stages de l'employeur
-          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
             } else if (snapshot.hasError) {
@@ -241,7 +248,8 @@ void fetchStudentNames(String internshipId) {
                                       actions: [
                                         ElevatedButton(
                                           onPressed: () {
-                                            Navigator.of(context).pop(); // Ferme le popup d'erreur.
+                                            Navigator.of(context)
+                                                .pop(); // Ferme le popup d'erreur.
                                           },
                                           child: const Text('OK'),
                                         ),
