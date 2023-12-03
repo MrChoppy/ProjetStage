@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:projetdev/authentication.dart';
 import 'package:intl/intl.dart';
+import 'package:projetdev/pages/map.dart';
 
 class Stages extends StatefulWidget {
   const Stages({super.key});
@@ -109,22 +110,54 @@ class _StagesState extends State<Stages> {
                         'statut': 'En attente',
                         'dateCandidature': currentDate,
                       });
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
 
-                      Navigator.of(context).pop();
-
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Succès'),
+                              content: const Text(
+                                  'Votre candidature a été enregistrée avec succès.'),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    }
+                  },
+                  child: const Text('POSTULER'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    String etudiantAddress = await getAdresseEtudiant(userId);
+                    if (context.mounted) {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: const Text('Succès'),
-                            content: const Text(
-                                'Votre candidature a été enregistrée avec succès.'),
+                            content: Container(
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              height: MediaQuery.of(context).size.height * 0.6,
+                              child: CustomMap(
+                                stageAdresse: stageData['adresse'],
+                                etudiantAdresse: etudiantAddress,
+                              ),
+                            ),
                             actions: [
-                              ElevatedButton(
+                              TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: const Text('OK'),
+                                child: const Text('Close'),
                               ),
                             ],
                           );
@@ -132,8 +165,8 @@ class _StagesState extends State<Stages> {
                       );
                     }
                   },
-                  child: const Text('POSTULER'),
-                ),
+                  child: const Text('ITINERAIRE'),
+                )
               ],
             );
           },
@@ -238,6 +271,12 @@ class _StagesState extends State<Stages> {
                                           content: const Text(
                                               "Les informations de l'employeur ne sont plus disponibles."),
                                           actions: [
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text('OK'),
+                                            ),
                                             ElevatedButton(
                                               onPressed: () {
                                                 Navigator.of(context).pop();

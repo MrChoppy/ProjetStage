@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:projetdev/authentication.dart';
 import 'package:projetdev/pages/stages.dart';
 import 'package:projetdev/pages/update.dart';
-import 'package:projetdev/pages/map.dart';
 
 class MenuEtudiant extends StatefulWidget {
   const MenuEtudiant({super.key});
@@ -13,7 +12,7 @@ class MenuEtudiant extends StatefulWidget {
 
 class _MenuEtudiantState extends State<MenuEtudiant> {
   int _currentIndex = 0;
-  final List<Widget> _pages = [const Stages(), const Update(), const Map()];
+  final List<Widget> _pages = [const Stages(), const Update()];
 
   @override
   Widget build(BuildContext context) {

@@ -51,6 +51,42 @@ class _SignupState extends State<Signup> {
     return passwordRegEx.hasMatch(password);
   }
 
+  bool isAdresseValid(adresse_) {
+    final String adresse = adresse_;
+
+    if (adresse.isEmpty) {
+      setState(() {
+        errorText = 'Veuillez entrer une adresse.';
+      });
+      return false;
+    }
+
+    final List<String> addressComponents = adresse.split(' ');
+
+    if (addressComponents.length < 3) {
+      setState(() {
+        errorText =
+            'Adresse invalide. Veuillez inclure le numéro, la rue et la ville au minimum.';
+      });
+      return false;
+    }
+
+    final String numero = addressComponents[0].trim();
+
+    if (int.tryParse(numero) == null) {
+      setState(() {
+        errorText =
+            'Le numéro dans l\'adresse doit être composé uniquement de chiffres.';
+      });
+      return false;
+    }
+
+    setState(() {
+      errorText = '';
+    });
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     final emailFocusNode = FocusNode();
@@ -272,10 +308,12 @@ class _SignupState extends State<Signup> {
                     errorText =
                         "Le mot de passe doit contenir au moins 6 caractères.";
                   });
+                } else if (!isAdresseValid(adresseController.text)) {
                 } else {
                   setState(() {
                     errorText = null;
                   });
+
                   if (selectedUserType == "Étudiant" &&
                       isEmailValid(email) &&
                       isPhoneValid(phoneNumber)) {

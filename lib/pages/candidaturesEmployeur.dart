@@ -141,7 +141,6 @@ class _CandidaturesEmployeurState extends State<CandidaturesEmployeur> {
                                   ],
                                 );
                               }
-                              ;
                             });
                       },
                     ),

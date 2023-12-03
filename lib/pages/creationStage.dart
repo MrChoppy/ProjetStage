@@ -40,6 +40,42 @@ class _CreationStageState extends State<CreationStage> {
     }
   }
 
+  bool isAdresseValid() {
+    final String adresse = adresseController.text;
+
+    if (adresse.isEmpty) {
+      setState(() {
+        message = 'Veuillez entrer une adresse.';
+      });
+      return false;
+    }
+
+    final List<String> addressComponents = adresse.split(' ');
+
+    if (addressComponents.length < 3) {
+      setState(() {
+        message =
+            'Adresse invalide. Veuillez inclure le numéro, la rue et la ville au minimum.';
+      });
+      return false;
+    }
+
+    final String numero = addressComponents[0].trim();
+
+    if (int.tryParse(numero) == null) {
+      setState(() {
+        message =
+            'Le numéro dans l\'adresse doit être composé uniquement de chiffres.';
+      });
+      return false;
+    }
+
+    setState(() {
+      message = '';
+    });
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,7 +127,7 @@ class _CreationStageState extends State<CreationStage> {
                   String description = descriptionController.text;
                   String dateDebut = dateDebutController.text;
                   String dateFin = dateFinController.text;
-
+                  isAdresseValid();
                   if (poste.isEmpty ||
                       compagnie.isEmpty ||
                       adresse.isEmpty ||
@@ -101,7 +137,7 @@ class _CreationStageState extends State<CreationStage> {
                     setState(() {
                       message = 'Veuillez remplir tous les champs.';
                     });
-                  } else {
+                  } else if (isAdresseValid()) {
                     addStage(context, poste, compagnie, adresse, dateDebut,
                         dateFin, description);
                     setState(() {
@@ -115,7 +151,11 @@ class _CreationStageState extends State<CreationStage> {
                   }
                 },
                 child: const Text('Ajouter le Stage'),
-              )
+              ),
+              Text(
+                message,
+                style: const TextStyle(color: Colors.red),
+              ),
             ],
           ),
         ),
