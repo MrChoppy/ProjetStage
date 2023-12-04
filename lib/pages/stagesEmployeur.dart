@@ -127,12 +127,6 @@ class _StagesEmployeurState extends State<StagesEmployeur> {
                   },
                   child: const Text('Supprimer le stage'),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    fetchStudentNames(stageData.id);
-                  },
-                  child: const Text('Afficher les candidats'),
-                ),
               ]),
         );
       },
